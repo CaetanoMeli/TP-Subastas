@@ -36,6 +36,28 @@ paths:
       responses:
         default:
           description: "successful operation"
+  /user/validate:
+    get:
+      tags:
+      - "user"
+      summary: "Validate user email"
+      description: "Validates if email exists."
+      operationId: "validateEmail"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "query"
+        description: "The user email for login"
+        required: true
+        type: "string"
+      responses:
+        "204":
+          description: "Email is valid and exists"
+        "404":
+          description: "Email doesn't exist"
+        "400":
+          description: "Email is invalid"
   /user/login:
     get:
       tags:
@@ -72,6 +94,25 @@ paths:
               description: "date in UTC when token expires"
         "400":
           description: "Invalid username/password supplied"
+  /user/code:
+    post:
+      tags:
+      - "user"
+      summary: "Generate password with code"
+      description: "Adds new password to user with sent code."
+      operationId: "createUserPass"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "New user pass and code"
+        required: true
+        schema:
+          $ref: "#/definitions/NewUserPass"
+      responses:
+        default:
+          description: "successful operation"
   /user/logout:
     get:
       tags:
@@ -89,7 +130,7 @@ paths:
     get:
       tags:
       - "user"
-      summary: "Get user by user name"
+      summary: "Get user by user id"
       description: ""
       operationId: "getUserByName"
       produces:
@@ -153,6 +194,28 @@ paths:
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+  /home:
+    get:
+      tags:
+      - "auction"
+      summary: "Returns Home content"
+      description: "Returns Home content."
+      operationId: "getHome"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user_id"
+        in: "query"
+        description: "The user id in case it is logged in"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "Home content"
+          schema:
+            $ref: "#/definitions/Home"
+        "500":
+          description: "Internal Server Error"
 definitions:
   NewUser:
     type: "object"
@@ -173,6 +236,14 @@ definitions:
       address:
         type: "string"
       phone:
+        type: "string"
+  NewUserPass:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int64"
+      password:
         type: "string"
   User:
     type: "object"
@@ -196,6 +267,54 @@ definitions:
         type: "string"
       phone:
         type: "string"
+  Home:
+    type: "object"
+    properties:
+      menu:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: "string"
+              example: home
+            description:
+              type: "string"
+              example: Inicio
+            icon:
+              type: "string"
+              example: home
+      filters:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: "string"
+              example: Categorias
+            types:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: "string"
+                    example: comun
+      auctions:
+        type: array
+        items:
+          type: object
+          properties:
+            number:
+              type: "integer"
+              format: "int32"
+            title:
+              type: "string"
+            category:
+              type: "string"
+              enum: [comun, especial, plata, oro, platino]
+            status:
+              type: "string"
   ApiResponse:
     type: "object"
     properties:
