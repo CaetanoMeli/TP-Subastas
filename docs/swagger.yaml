@@ -34,8 +34,12 @@ paths:
         schema:
           $ref: "#/definitions/NewUser"
       responses:
-        default:
-          description: "successful operation"
+        "201":
+          description: "User created successfully"
+        "400":
+          description: "Email is invalid"
+        "500":
+          description: "Server Error"
   /users/validate:
     get:
       tags:
@@ -58,6 +62,8 @@ paths:
           description: "Email doesn't exist"
         "400":
           description: "Email is invalid"
+        "500":
+          description: "Server Error"
   /users/login:
     get:
       tags:
@@ -83,17 +89,12 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ApiResponse"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
+        "404":
+          description: "Can't find user with provided name"
         "400":
           description: "Invalid username/password supplied"
+        "500":
+          description: "Server Error"
   /users/code:
     post:
       tags:
@@ -111,8 +112,12 @@ paths:
         schema:
           $ref: "#/definitions/NewUserPass"
       responses:
-        default:
-          description: "successful operation"
+        "201":
+          description: "Password generated successfully"
+        "400":
+          description: "Email is invalid"
+        "500":
+          description: "Server Error"
   /users/logout:
     get:
       tags:
@@ -126,6 +131,8 @@ paths:
       responses:
         default:
           description: "successful operation"
+        "500":
+          description: "Server Error"
   /users/{id}:
     get:
       tags:
@@ -150,6 +157,8 @@ paths:
           description: "Invalid user id supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
     put:
       tags:
       - "user"
@@ -175,6 +184,8 @@ paths:
           description: "Invalid user supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
     delete:
       tags:
       - "user"
@@ -190,10 +201,14 @@ paths:
         required: true
         type: "string"
       responses:
+        "204":
+          description: "User deleted successfully"
         "400":
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
   /users/{id}/bids:
     get:
       tags:
@@ -213,9 +228,40 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Bids"
         "400":
           description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
+        "500":
+          description: "Server Error"
+    put:
+      tags:
+      - "user"
+      summary: "Add user bid"
+      description: ""
+      operationId: "addUserBid"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be added a bid to. "
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Bid to add"
+        required: true
+        schema:
+          $ref: "#/definitions/NewBid"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Bids"
+        "400":
+          description: "Invalid user id supplied or invalid bid amount"
         "404":
           description: "User not found"
   /users/{id}/stats:
@@ -235,13 +281,15 @@ paths:
         type: "string"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserStats"
         "400":
           description: "Invalid user id supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
   /users/{id}/payment_methods:
     get:
       tags:
@@ -261,11 +309,13 @@ paths:
         "200":
           description: "successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/PaymentMethods"
         "400":
           description: "Invalid user id supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
     put:
       tags:
       - "user"
@@ -282,15 +332,19 @@ paths:
         type: "string"
       - in: "body"
         name: "body"
-        description: "Updated user object"
+        description: "New payment method object"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/PaymentMethod"
       responses:
+        "201":
+          description: "Payment method added"
         "400":
           description: "Invalid user supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
     delete:
       tags:
       - "user"
@@ -311,10 +365,14 @@ paths:
         required: true
         type: "string"
       responses:
+        "200":
+          description: "Deleted payment method"
         "400":
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
   /users/{id}/articles:
     get:
       tags:
@@ -339,6 +397,8 @@ paths:
           description: "Invalid user id supplied"
         "404":
           description: "User not found"
+        "500":
+          description: "Server Error"
   /home:
     get:
       tags:
@@ -380,7 +440,7 @@ paths:
         "200":
           description: "Auction content"
           schema:
-            $ref: "#/definitions/Home"
+            $ref: "#/definitions/Auction"
         "404":
           description: "Unexisting Auction"
         "500":
@@ -404,7 +464,7 @@ paths:
         "200":
           description: "Auction catalog content"
           schema:
-            $ref: "#/definitions/Home"
+            $ref: "#/definitions/AuctionCatalog"
         "500":
           description: "Internal Server Error"
 definitions:
@@ -427,6 +487,167 @@ definitions:
       address:
         type: "string"
       phone:
+        type: "string"
+  Auction:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+      detail:
+        type: "object"
+        properties:
+          startDate:
+            type: "string"
+          owner:
+            type: "string"
+          category:
+            type: "string"
+            enum: [comun, especial, plata, oro, platino]
+          articleAmount:
+            type: "integer"
+            format: "int64"
+          description:
+            type: "string"
+  AuctionCatalog:
+    type: "object"
+    properties:
+      auction_id:
+        type: "integer"
+        format: "int64"
+      articles:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: "string"
+            status:
+              type: "string"
+            canBid:
+              type: "boolean"
+            description:
+              type: "string"
+            owner:
+              type: "string"
+            basePrice:
+              type: "string"
+            pictures:
+              type: object
+              properties:
+                url:
+                  type: "string"
+  Bids:
+    type: "object"
+    properties:
+      user:
+        type: object
+        properties:
+          name:
+            type: "string"
+          avatar:
+            type: "string"
+          category:
+            type: "string"
+            enum: [comun, especial, plata, oro, platino]
+      bids:
+        type: array
+        items:
+          type: object
+          properties:
+            date:
+              type: "string"
+            article:
+              type: "string"
+            amount:
+              type: "integer"
+              format: "int64"
+            result:
+              type: "string"
+  NewBid:
+    type: "object"
+    properties:
+      auction_id:
+        type: "integer"
+        format: "int64"
+      article_id:
+        type: "integer"
+        format: "int64"
+      amount:
+        type: "integer"
+        format: "int64"
+  UserStats:
+    type: "object"
+    properties:
+      user:
+        type: object
+        properties:
+          name:
+            type: "string"
+          avatar:
+            type: "string"
+          category:
+            type: "string"
+            enum: [comun, especial, plata, oro, platino]
+      bidResults:
+        type: object
+        properties:
+            won:
+              type: "integer"
+              format: "int64"
+              example: 5
+            lost:
+              type: "integer"
+              format: "int64"
+              example: 5
+      categoryParticipation:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: "string"
+              enum: [comun, especial, plata, oro, platino]
+            amount:
+              type: "integer"
+              format: "int64"
+  PaymentMethods:
+    type: "object"
+    properties:
+      paymentMethods:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: "integer"
+              format: "int64"
+            type:
+              type: "string"
+              enum: [card, bank_account]
+            name:
+              type: "string"
+              example: Tarjeta VISA
+            bin:
+              type: "string"
+              example: xxxx xxxx xxxx 1234
+            description:
+              type: "string"
+  PaymentMethod:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+        enum: [card, bank_account]
+      name:
+        type: "string"
+        example: Tarjeta VISA
+      bin:
+        type: "string"
+        example: 1234 1234 1234 1234
+      description:
         type: "string"
   NewUserPass:
     type: "object"
