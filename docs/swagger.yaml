@@ -390,9 +390,40 @@ paths:
         type: "string"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/UserArticles"
+        "400":
+          description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
+        "500":
+          description: "Server Error"
+    put:
+      tags:
+      - "user"
+      summary: "Add article to user"
+      description: ""
+      operationId: "addUserArticle"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be fetched. "
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "New payment method object"
+        required: true
+        schema:
+          $ref: "#/definitions/Article"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/UserArticles"
         "400":
           description: "Invalid user id supplied"
         "404":
@@ -648,6 +679,57 @@ definitions:
         type: "string"
         example: 1234 1234 1234 1234
       description:
+        type: "string"
+  UserArticles:
+    type: "object"
+    properties:
+      user:
+        type: object
+        properties:
+          name:
+            type: "string"
+          avatar:
+            type: "string"
+          category:
+            type: "string"
+            enum: [comun, especial, plata, oro, platino]
+      articles:
+        type: array
+        items:
+          type: object
+          properties:
+            image:
+              type: "string"
+            description:
+              type: "string"
+            status:
+              type: "string"
+              enum: [pending_approval, pending_confirm, pending_auction, assigned, sold]
+            title:
+              type: "string"
+            basePrice:
+              type: integer
+              format: "int64"
+            comission:
+              type: "string"
+            start_date:
+              type: "string"
+            end_date:
+              type: "string"
+            soldPrice:
+              type: "string"
+            earnings:
+              type: "string"
+  Article:
+    type: "object"
+    properties:
+      image:
+        type: "string"
+      description:
+        type: "string"
+      fullDescription:
+        type: "string"
+      title:
         type: "string"
   NewUserPass:
     type: "object"
