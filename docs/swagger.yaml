@@ -17,7 +17,7 @@ schemes:
 - "https"
 - "http"
 paths:
-  /user:
+  /users:
     post:
       tags:
       - "user"
@@ -36,7 +36,7 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/validate:
+  /users/validate:
     get:
       tags:
       - "user"
@@ -58,7 +58,7 @@ paths:
           description: "Email doesn't exist"
         "400":
           description: "Email is invalid"
-  /user/login:
+  /users/login:
     get:
       tags:
       - "user"
@@ -94,7 +94,7 @@ paths:
               description: "date in UTC when token expires"
         "400":
           description: "Invalid username/password supplied"
-  /user/code:
+  /users/code:
     post:
       tags:
       - "user"
@@ -113,7 +113,7 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/logout:
+  /users/logout:
     get:
       tags:
       - "user"
@@ -126,7 +126,7 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/{id}:
+  /users/{id}:
     get:
       tags:
       - "user"
@@ -194,6 +194,151 @@ paths:
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+  /users/{id}/bids:
+    get:
+      tags:
+      - "user"
+      summary: "Get user historic bids"
+      description: ""
+      operationId: "getUserBids"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be fetched. "
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
+  /users/{id}/stats:
+    get:
+      tags:
+      - "user"
+      summary: "Get user statistics"
+      description: ""
+      operationId: "getUserStatistics"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be fetched. "
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
+  /users/{id}/payment_methods:
+    get:
+      tags:
+      - "user"
+      summary: "Get user payment methods"
+      description: ""
+      operationId: "getUserPaymentMethods"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be fetched. "
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Update user payment methods"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUserPaymentMethods"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "id that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid user supplied"
+        "404":
+          description: "User not found"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user payment method"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUserPaymentMethod"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be deleted"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "query"
+        description: "The id of the payment method that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+  /users/{id}/articles:
+    get:
+      tags:
+      - "user"
+      summary: "Get user published articles"
+      description: ""
+      operationId: "getUserArticles"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the user that needs to be fetched. "
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid user id supplied"
+        "404":
+          description: "User not found"
   /home:
     get:
       tags:
@@ -212,6 +357,52 @@ paths:
       responses:
         "200":
           description: "Home content"
+          schema:
+            $ref: "#/definitions/Home"
+        "500":
+          description: "Internal Server Error"
+  /auctions/{id}:
+    get:
+      tags:
+      - "auction"
+      summary: "Returns Auction content"
+      description: "Returns Auction content."
+      operationId: "getAuction"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The auction number"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Auction content"
+          schema:
+            $ref: "#/definitions/Home"
+        "404":
+          description: "Unexisting Auction"
+        "500":
+          description: "Internal Server Error"
+  /auctions/{id}/catalog:
+    get:
+      tags:
+      - "auction"
+      summary: "Returns Auction catalog content"
+      description: "Returns Auction catalog content."
+      operationId: "getAuctionCatalog"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The auction number"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Auction catalog content"
           schema:
             $ref: "#/definitions/Home"
         "500":
