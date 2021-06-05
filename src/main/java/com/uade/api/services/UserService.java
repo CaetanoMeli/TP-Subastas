@@ -1,7 +1,9 @@
 package com.uade.api.services;
 
 import com.uade.api.entities.User;
+import com.uade.api.exceptions.BadRequestException;
 import com.uade.api.exceptions.InternalServerException;
+import com.uade.api.exceptions.NotFoundException;
 import com.uade.api.models.UserModel;
 import com.uade.api.models.UserStatus;
 import com.uade.api.repositories.UserRepository;
@@ -27,12 +29,70 @@ public class UserService {
         }
     }
 
+    public UserModel getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        return new UserModel(
+                user.getDni(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getAddress(),
+                user.getPhone(),
+                UserStatus.fromString(user.getStatus())
+        );
+    }
+
+    public UserModel getUserByEmailAndPassword(String email, String password) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        if (!user.getPassword().equals(password)) {
+            throw new BadRequestException();
+        }
+
+        return new UserModel(
+                user.getDni(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getAddress(),
+                user.getPhone(),
+                UserStatus.fromString(user.getStatus())
+        );
+    }
+
+    public void updateUserPassword(String email, Integer code, String password) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        if (user.getCode() == null || !user.getCode().equals(code)) {
+            throw new BadRequestException();
+        }
+
+        user.setPassword(password);
+
+        userRepository.save(user);
+    }
+
     private User mapModelToEntity(UserModel userModel) {
         User user = new User();
 
         user.setDni(userModel.getDni());
         user.setFirstName(userModel.getFirstName());
         user.setLastName(userModel.getLastName());
+        user.setEmail(userModel.getEmail());
+        user.setPhone(userModel.getPhone());
         user.setAddress(userModel.getAddress());
 
         return user;

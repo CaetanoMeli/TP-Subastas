@@ -10,4 +10,10 @@ public interface Validator {
             throw new BadRequestException();
         }
     }
+
+    default void nonNull(Object object) {
+        if (object == null) {
+            throw new BadRequestException();
+        }
+    }
 }

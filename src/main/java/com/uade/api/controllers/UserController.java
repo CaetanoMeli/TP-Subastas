@@ -1,16 +1,18 @@
 package com.uade.api.controllers;
 
 import com.uade.api.controllers.validators.UserValidator;
-import com.uade.api.dtos.NewUserDTO;
+import com.uade.api.dtos.request.NewPasswordDTO;
+import com.uade.api.dtos.request.NewUserDTO;
+import com.uade.api.dtos.response.UserDTO;
 import com.uade.api.models.UserModel;
 import com.uade.api.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,13 +39,30 @@ public class UserController {
     }
 
     @GetMapping(value = "/validate")
-    public ResponseEntity validateEmail() {
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public UserDTO validateEmail(@RequestParam String email) {
+        userValidator.validateEmail(email);
+
+        UserModel userModel = userService.getUserByEmail(email);
+
+        return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
     }
 
     @GetMapping(value = "/login")
-    public ResponseEntity login() {
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public UserDTO login(@RequestParam String email, @RequestParam String password) {
+        userValidator.validateEmailAndPassword(email, password);
+
+        UserModel userModel = userService.getUserByEmailAndPassword(email, password);
+
+        return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
+    }
+
+    @PostMapping(value = "/code")
+    public ResponseEntity generatePassword(@RequestBody NewPasswordDTO dto) {
+        userValidator.validateNewPassword(dto);
+
+        userService.updateUserPassword(dto.email, dto.code, dto.password);
+
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/logout")

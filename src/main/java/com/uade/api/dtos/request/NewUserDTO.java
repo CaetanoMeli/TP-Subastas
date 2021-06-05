@@ -1,4 +1,4 @@
-package com.uade.api.dtos;
+package com.uade.api.dtos.request;
 
 public class NewUserDTO {
     public String dni;

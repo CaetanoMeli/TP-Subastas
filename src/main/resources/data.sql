@@ -6,6 +6,9 @@ CREATE TABLE personas (
 	nombre VARCHAR(150) NOT NULL,
 	apellido VARCHAR(150) NOT NULL,
 	direccion VARCHAR(250),
+	telefono VARCHAR(250),
+	contraseña VARCHAR(250),
+	codigo INT,
 	estado VARCHAR(15) CONSTRAINT chkEstado CHECK (estado in ('activo', 'inactivo')),
 	foto VARBINARY(max)
 )
