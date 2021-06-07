@@ -42,7 +42,7 @@ public class UserController {
     public UserDTO validateEmail(@RequestParam String email) {
         userValidator.validateEmail(email);
 
-        UserModel userModel = userService.getUserByEmail(email);
+        UserModel userModel = userService.getUser(email);
 
         return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
     }
@@ -51,7 +51,7 @@ public class UserController {
     public UserDTO login(@RequestParam String email, @RequestParam String password) {
         userValidator.validateEmailAndPassword(email, password);
 
-        UserModel userModel = userService.getUserByEmailAndPassword(email, password);
+        UserModel userModel = userService.getUser(email, password);
 
         return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
     }

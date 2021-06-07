@@ -29,7 +29,26 @@ public class UserService {
         }
     }
 
-    public UserModel getUserByEmail(String email) {
+    public UserModel getUser(int userId) {
+        User user = userRepository.findById(userId);
+        UserModel model = null;
+
+        if (user != null) {
+            model = new UserModel(
+                    user.getDni(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getAddress(),
+                    user.getPhone(),
+                    UserStatus.fromString(user.getStatus())
+            );
+        }
+
+        return model;
+    }
+
+    public UserModel getUser(String email) {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
@@ -47,7 +66,7 @@ public class UserService {
         );
     }
 
-    public UserModel getUserByEmailAndPassword(String email, String password) {
+    public UserModel getUser(String email, String password) {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
