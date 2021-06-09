@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "subastas")
 public class Auction {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "identificador")
     private int id;
     @Column(name = "fecha")

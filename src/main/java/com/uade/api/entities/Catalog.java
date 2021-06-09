@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "catalogos")
 public class Catalog {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "identificador")
     private int id;
     @Column(name = "descripcion")
