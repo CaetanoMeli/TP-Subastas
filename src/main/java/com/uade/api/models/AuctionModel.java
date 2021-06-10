@@ -12,6 +12,7 @@ import java.util.Date;
 @RequiredArgsConstructor(staticName = "of")
 public class AuctionModel {
     private final Integer number;
+    private final String image;
     private final Date date;
     private final Time time;
     private final int auctionOwner;

@@ -34,6 +34,8 @@ public class Auction {
     private String hasSecurity;
     @Column(name = "categoria")
     private String category;
+    @Column(name = "image")
+    private String image;
 
     public int getId() {
         return id;
@@ -109,5 +111,13 @@ public class Auction {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

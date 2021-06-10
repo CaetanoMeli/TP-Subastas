@@ -28,6 +28,7 @@ public class AuctionService {
             model = auctions.stream()
                     .map(auction -> AuctionModel.of(
                             auction.getId(),
+                            auction.getImage(),
                             auction.getDate(),
                             auction.getTime(),
                             auction.getAuctioner(),

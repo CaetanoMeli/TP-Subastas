@@ -19,7 +19,7 @@ public class AuctionMarshaller {
 
     public HomeDTO buildHome(Map<Integer, AuctionModel> auctions, List<CatalogModel> catalogs, CategoryType userCategory) {
         return HomeDTO.of(
-                MenuDTO.of("Inicio", "home"),
+                List.of(MenuDTO.of("Inicio", "home")),
                 List.of(
                     FilterDTO.of(
                         "Categorias",
@@ -75,9 +75,10 @@ public class AuctionMarshaller {
     private AuctionDTO modelToDTO(AuctionModel auctionModel, CatalogModel catalogModel) {
         return AuctionDTO.of(
             auctionModel.getNumber(),
-            catalogModel.getDescription(),
+            String.format("Subasta #%s", auctionModel.getNumber()),
             auctionModel.getCategory().value(),
-            auctionModel.getStatus().value()
+            auctionModel.getStatus().value(),
+            auctionModel.getImage()
         );
     }
 

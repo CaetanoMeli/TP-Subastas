@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class HomeDTO {
-    public MenuDTO menu;
+    public List<MenuDTO> menu;
     public List<FilterDTO> filters;
     public List<AuctionDTO> auctions;
 

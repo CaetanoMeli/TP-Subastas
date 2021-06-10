@@ -8,8 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class AuctionDTO {
-    public int number;
+    public int id;
     public String title;
     public String category;
     public String status;
+    public String image;
 }
