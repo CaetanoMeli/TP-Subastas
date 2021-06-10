@@ -35,7 +35,7 @@ public class AuctionController {
         this.auctionMarshaller = auctionMarshaller;
     }
 
-    @GetMapping(value = "/validate")
+    @GetMapping(value = "/home")
     public HomeDTO getHome(@RequestParam(required = false) int userId) {
         ClientModel clientModel = clientService.getClient(userId);
         Map<Integer, AuctionModel> auctions = auctionService.getAuctions();
