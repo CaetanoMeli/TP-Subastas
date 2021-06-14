@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class UserDTO {
+    public Integer userId;
     public String firstName;
     public String lastName;
     public String status;

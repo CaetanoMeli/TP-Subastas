@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class MenuDTO {
-    String description;
-    String icon;
+    String name;
+    String surname;
+    String category;
 }

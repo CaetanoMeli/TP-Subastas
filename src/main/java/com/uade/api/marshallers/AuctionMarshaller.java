@@ -5,62 +5,61 @@ import com.uade.api.dtos.response.FilterDTO;
 import com.uade.api.dtos.response.HomeDTO;
 import com.uade.api.dtos.response.MenuDTO;
 import com.uade.api.models.AuctionModel;
-import com.uade.api.models.CatalogModel;
 import com.uade.api.models.CategoryType;
+import com.uade.api.models.UserModel;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class AuctionMarshaller {
 
-    public HomeDTO buildHome(Map<Integer, AuctionModel> auctions, List<CatalogModel> catalogs, CategoryType userCategory) {
+    public HomeDTO buildHome(List<AuctionModel> auctions, UserModel userModel) {
         return HomeDTO.of(
-                List.of(MenuDTO.of("Inicio", "home")),
+                MenuDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getCategory().value()),
                 List.of(
                     FilterDTO.of(
                         "Categorias",
                         List.of(FilterDTO.FilterType.of("comun"))
                     )
                 ),
-                buildAuctions(auctions, catalogs, userCategory)
+                buildAuctions(auctions, userModel.getCategory())
         );
     }
 
-    private List<AuctionDTO> buildAuctions(Map<Integer, AuctionModel> auctions, List<CatalogModel> catalogs, CategoryType userCategory) {
+    private List<AuctionDTO> buildAuctions(List<AuctionModel> auctions, CategoryType userCategory) {
         List<AuctionDTO> auctionDTOS;
         if (userCategory != null) {
-            auctionDTOS = buildAuctionsForLoggedUser(auctions, catalogs, userCategory);
+            auctionDTOS = buildAuctionsForLoggedUser(auctions, userCategory);
         } else {
-            auctionDTOS = buildAuctionsForUnloggedUser(auctions, catalogs);
+            auctionDTOS = buildAuctionsForUnloggedUser(auctions);
         }
 
         return auctionDTOS;
     }
 
-    private List<AuctionDTO> buildAuctionsForUnloggedUser(Map<Integer, AuctionModel> auctions, List<CatalogModel> catalogs) {
-        return catalogs
+    private List<AuctionDTO> buildAuctionsForUnloggedUser(List<AuctionModel> auctions) {
+        return auctions
                 .stream()
-                .sorted(catalogCategoryComparator(auctions).reversed())
-                .map(catalog -> modelToDTO(auctions.get(catalog.getAuctionID()), catalog))
+                .sorted(catalogCategoryComparator().reversed())
+                .map(this::modelToDTO)
                 .collect(Collectors.toList());
     }
 
-    private List<AuctionDTO> buildAuctionsForLoggedUser(Map<Integer, AuctionModel> auctions, List<CatalogModel> catalogs, CategoryType userCategory) {
-        List<AuctionDTO> userCategoryCatalogs = catalogs
+    private List<AuctionDTO> buildAuctionsForLoggedUser(List<AuctionModel> auctions, CategoryType userCategory) {
+        List<AuctionDTO> userCategoryCatalogs = auctions
                 .stream()
-                .filter(catalog -> userCategory.equals(auctions.get(catalog.getAuctionID()).getCategory()))
-                .map(catalog -> modelToDTO(auctions.get(catalog.getAuctionID()), catalog))
+                .filter(auction -> userCategory.equals(auction.getCategory()))
+                .map(this::modelToDTO)
                 .collect(Collectors.toList());
 
-        List<AuctionDTO> prioritySortedCatalogs = catalogs
+        List<AuctionDTO> prioritySortedCatalogs = auctions
                 .stream()
-                .filter(catalog -> !userCategory.equals(auctions.get(catalog.getAuctionID()).getCategory()))
-                .sorted(catalogCategoryComparator(auctions))
-                .map(catalog -> modelToDTO(auctions.get(catalog.getAuctionID()), catalog))
+                .filter(auction -> !userCategory.equals(auction.getCategory()))
+                .sorted(catalogCategoryComparator())
+                .map(this::modelToDTO)
                 .collect(Collectors.toList());
 
         userCategoryCatalogs.addAll(prioritySortedCatalogs);
@@ -68,11 +67,11 @@ public class AuctionMarshaller {
         return userCategoryCatalogs;
     }
 
-    private Comparator<CatalogModel> catalogCategoryComparator(Map<Integer, AuctionModel> auctions) {
-        return Comparator.comparingInt(c -> auctions.get(c.getAuctionID()).getCategory().priority());
+    private Comparator<AuctionModel> catalogCategoryComparator() {
+        return Comparator.comparingInt(auction -> auction.getCategory().priority());
     }
 
-    private AuctionDTO modelToDTO(AuctionModel auctionModel, CatalogModel catalogModel) {
+    private AuctionDTO modelToDTO(AuctionModel auctionModel) {
         return AuctionDTO.of(
             auctionModel.getNumber(),
             String.format("Subasta #%s", auctionModel.getNumber()),

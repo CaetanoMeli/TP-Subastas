@@ -31,7 +31,7 @@ public class UserController {
     public ResponseEntity registerUser(@RequestBody NewUserDTO dto) {
         userValidator.validateNewUser(dto);
 
-        UserModel model = UserModel.of(dto.dni, dto.firstName, dto.lastName, dto.email, dto.address, dto.phone);
+        UserModel model = UserModel.of(null, dto.dni, dto.firstName, dto.lastName, dto.email, dto.address, dto.phone);
 
         userService.registerUser(model);
 
@@ -44,7 +44,7 @@ public class UserController {
 
         UserModel userModel = userService.getUser(email);
 
-        return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
+        return UserDTO.of(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
     }
 
     @GetMapping(value = "/login")
@@ -53,7 +53,7 @@ public class UserController {
 
         UserModel userModel = userService.getUser(email, password);
 
-        return UserDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
+        return UserDTO.of(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getStatus().value());
     }
 
     @PostMapping(value = "/code")

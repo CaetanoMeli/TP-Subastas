@@ -2,9 +2,12 @@ package com.uade.api.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,6 +25,10 @@ public class Client {
     private String category;
     @Column(name = "verificador")
     private int verifier;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "identificador")
+    private User user;
 
     public int getCountryNumber() {
         return countryNumber;

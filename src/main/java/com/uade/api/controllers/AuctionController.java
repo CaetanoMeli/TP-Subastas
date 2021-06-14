@@ -3,33 +3,31 @@ package com.uade.api.controllers;
 import com.uade.api.dtos.response.HomeDTO;
 import com.uade.api.marshallers.AuctionMarshaller;
 import com.uade.api.models.AuctionModel;
-import com.uade.api.models.CatalogModel;
-import com.uade.api.models.ClientModel;
+import com.uade.api.models.UserModel;
 import com.uade.api.services.AuctionService;
 import com.uade.api.services.CatalogService;
-import com.uade.api.services.ClientService;
+import com.uade.api.services.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class AuctionController {
 
-    private final ClientService clientService;
+    private final UserService userService;
     private final AuctionService auctionService;
     private final CatalogService catalogService;
     private final AuctionMarshaller auctionMarshaller;
 
     public AuctionController(
-            ClientService clientService,
+            UserService userService,
             AuctionService auctionService,
             CatalogService catalogService,
             AuctionMarshaller auctionMarshaller
     ) {
-        this.clientService = clientService;
+        this.userService = userService;
         this.auctionService = auctionService;
         this.catalogService = catalogService;
         this.auctionMarshaller = auctionMarshaller;
@@ -37,10 +35,9 @@ public class AuctionController {
 
     @GetMapping(value = "/home")
     public HomeDTO getHome(@RequestParam(required = false) int userId) {
-        ClientModel clientModel = clientService.getClient(userId);
-        Map<Integer, AuctionModel> auctions = auctionService.getAuctions();
-        List<CatalogModel> catalogs = catalogService.getCatalogs();
+        UserModel userModel = userService.getUser(userId);
+        List<AuctionModel> auctions = auctionService.getAuctions();
 
-        return auctionMarshaller.buildHome(auctions, catalogs, clientModel.getCategoryType());
+        return auctionMarshaller.buildHome(auctions, userModel);
     }
 }

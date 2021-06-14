@@ -10,6 +10,7 @@ import lombok.Setter;
 @RequiredArgsConstructor(staticName = "of")
 @AllArgsConstructor
 public class UserModel {
+    private final Integer id;
     private final String dni;
     private final String firstName;
     private final String lastName;
@@ -17,4 +18,6 @@ public class UserModel {
     private final String address;
     private final String phone;
     private UserStatus status;
+    private CategoryType category;
+    private ClientStatus clientStatus;
 }

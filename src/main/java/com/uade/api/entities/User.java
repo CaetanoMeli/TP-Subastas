@@ -1,10 +1,12 @@
 package com.uade.api.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -32,6 +34,13 @@ public class User {
     private String password;
     @Column(name = "estado")
     private String status;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private Client client;
+
+    public int getId() {
+        return id;
+    }
 
     public String getDni() {
         return dni;
@@ -103,5 +112,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

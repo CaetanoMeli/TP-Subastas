@@ -20,9 +20,9 @@ public class AuctionService {
         this.auctionRepository = auctionRepository;
     }
 
-    public Map<Integer, AuctionModel> getAuctions() {
+    public List<AuctionModel> getAuctions() {
         List<Auction> auctions = auctionRepository.findAll();
-        Map<Integer, AuctionModel> model = null;
+        List<AuctionModel> model = null;
 
         if (auctions != null && auctions.size() > 0) {
             model = auctions.stream()
@@ -39,7 +39,7 @@ public class AuctionService {
                             AuctionStatus.fromString(auction.getStatus())
                             )
                     )
-                    .collect(Collectors.toMap(AuctionModel::getNumber, auction -> auction));
+                    .collect(Collectors.toList());
         }
 
         return model;
