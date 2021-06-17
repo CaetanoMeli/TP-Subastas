@@ -29,7 +29,7 @@ public class User {
     @Column(name = "telefono")
     private String phone;
     @Column(name = "codigo")
-    private Integer code;
+    private String code;
     @Column(name = "contraseña")
     private String password;
     @Column(name = "estado")
@@ -90,11 +90,11 @@ public class User {
         this.phone = phone;
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

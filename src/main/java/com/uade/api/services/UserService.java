@@ -1,5 +1,6 @@
 package com.uade.api.services;
 
+import com.uade.api.entities.Client;
 import com.uade.api.entities.User;
 import com.uade.api.exceptions.BadRequestException;
 import com.uade.api.exceptions.InternalServerException;
@@ -9,6 +10,7 @@ import com.uade.api.models.ClientStatus;
 import com.uade.api.models.UserModel;
 import com.uade.api.models.UserStatus;
 import com.uade.api.repositories.UserRepository;
+import com.uade.api.utils.RandomNumberGenerator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -103,14 +105,34 @@ public class UserService {
         );
     }
 
-    public void updateUserPassword(String email, Integer code, String password) {
+    public String updateUserCode(String email) {
         User user = userRepository.findUserByEmail(email);
 
         if (user == null) {
             throw new NotFoundException();
         }
 
-        if (user.getCode() == null || !user.getCode().equals(code)) {
+        if (ClientStatus.ADMITTED.value().equals(user.getClient().getClientStatus())) {
+            throw new BadRequestException();
+        }
+
+        String newCode = RandomNumberGenerator.generateRandomNumber();
+
+        user.setCode(newCode);
+
+        userRepository.save(user);
+
+        return newCode;
+    }
+
+    public void updateUserPassword(String email, String code, String password) {
+        User user = userRepository.findUserByEmail(email);
+
+        if (user == null) {
+            throw new NotFoundException();
+        }
+
+        if (ClientStatus.ADMITTED.value().equals(user.getClient().getClientStatus()) && user.getCode() == null || !user.getCode().equals(code)) {
             throw new BadRequestException();
         }
 
