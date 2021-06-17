@@ -34,7 +34,7 @@ public class AuctionController {
     }
 
     @GetMapping(value = "/home")
-    public HomeDTO getHome(@RequestParam(required = false) int userId) {
+    public HomeDTO getHome(@RequestParam(required = false) Integer userId) {
         UserModel userModel = userService.getUser(userId);
         List<AuctionModel> auctions = auctionService.getAuctions();
 
