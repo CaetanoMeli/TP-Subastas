@@ -25,7 +25,7 @@ public class AuctionMarshaller {
                         List.of(FilterDTO.FilterType.of("comun"))
                     )
                 ),
-                buildAuctions(auctions, userModel.getCategory())
+                buildAuctions(auctions, userModel)
         );
     }
 
@@ -38,8 +38,10 @@ public class AuctionMarshaller {
         return dto;
     }
 
-    private List<AuctionDTO> buildAuctions(List<AuctionModel> auctions, CategoryType userCategory) {
+    private List<AuctionDTO> buildAuctions(List<AuctionModel> auctions, UserModel userModel) {
         List<AuctionDTO> auctionDTOS;
+        CategoryType userCategory = userModel != null ? userModel.getCategory() : null;
+
         if (userCategory != null) {
             auctionDTOS = buildAuctionsForLoggedUser(auctions, userCategory);
         } else {
