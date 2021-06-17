@@ -18,7 +18,7 @@ public class AuctionMarshaller {
 
     public HomeDTO buildHome(List<AuctionModel> auctions, UserModel userModel) {
         return HomeDTO.of(
-                MenuDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getCategory().value()),
+                buildMenuDTO(userModel),
                 List.of(
                     FilterDTO.of(
                         "Categorias",
@@ -27,6 +27,15 @@ public class AuctionMarshaller {
                 ),
                 buildAuctions(auctions, userModel.getCategory())
         );
+    }
+
+    private MenuDTO buildMenuDTO(UserModel userModel) {
+        MenuDTO dto = null;
+        if (userModel != null) {
+            dto = MenuDTO.of(userModel.getFirstName(), userModel.getLastName(), userModel.getCategory().value());
+        }
+
+        return dto;
     }
 
     private List<AuctionDTO> buildAuctions(List<AuctionModel> auctions, CategoryType userCategory) {

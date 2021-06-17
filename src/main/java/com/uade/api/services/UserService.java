@@ -52,25 +52,30 @@ public class UserService {
         );
     }
 
-    public UserModel getUser(int userId) {
-        User user = userRepository.findById(userId);
+    public UserModel getUser(Integer userId) {
+        UserModel model = null;
+        if (userId != null) {
+            User user = userRepository.findById(userId.intValue());
 
-        if (user == null) {
-            throw new NotFoundException();
+            if (user == null) {
+                throw new NotFoundException();
+            }
+
+            model = new UserModel(
+                    user.getId(),
+                    user.getDni(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getAddress(),
+                    user.getPhone(),
+                    UserStatus.fromString(user.getStatus()),
+                    CategoryType.fromString(user.getClient().getCategory()),
+                    ClientStatus.fromString(user.getClient().getClientStatus())
+            );
         }
 
-        return new UserModel(
-                user.getId(),
-                user.getDni(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getAddress(),
-                user.getPhone(),
-                UserStatus.fromString(user.getStatus()),
-                CategoryType.fromString(user.getClient().getCategory()),
-                ClientStatus.fromString(user.getClient().getClientStatus())
-        );
+        return model;
     }
 
     public UserModel getUser(String email, String password) {
