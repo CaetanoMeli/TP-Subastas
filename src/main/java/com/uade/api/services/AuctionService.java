@@ -8,6 +8,7 @@ import com.uade.api.models.DepositStatus;
 import com.uade.api.repositories.AuctionRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -38,7 +39,10 @@ public class AuctionService {
     private AuctionModel mapToModel(Auction auction) {
         ZonedDateTime date = ZonedDateTime.ofInstant(auction.getDate().toInstant(), ZoneId.systemDefault());
 
-        ZonedDateTime dateTime = ZonedDateTime.ofInstant(auction.getTime().toInstant(), ZoneId.systemDefault());
+        ZonedDateTime dateTime = ZonedDateTime.ofInstant(LocalDate.EPOCH
+                .atTime(auction.getTime().toLocalTime())
+                .atZone(ZoneId.systemDefault())
+                .toInstant(), ZoneId.systemDefault());
 
         date.plusHours(dateTime.getHour());
         date.plusMinutes(dateTime.getMinute());
