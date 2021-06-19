@@ -9,12 +9,16 @@ import com.uade.api.models.CategoryType;
 import com.uade.api.models.UserModel;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class AuctionMarshaller {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     public HomeDTO buildHome(List<AuctionModel> auctions, UserModel userModel) {
         return HomeDTO.of(
@@ -86,7 +90,7 @@ public class AuctionMarshaller {
         return AuctionDTO.of(
             auctionModel.getNumber(),
             String.format("Subasta #%s", auctionModel.getNumber()),
-            auctionModel.getDate().toString(),
+            auctionModel.getDate().format(DATE_FORMATTER),
             auctionModel.getCategory().value(),
             auctionModel.getStatus().value(),
             auctionModel.getImage()

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Time;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import java.util.Date;
 public class AuctionModel {
     private final Integer number;
     private final String image;
-    private final Date date;
+    private final ZonedDateTime date;
     private final Time time;
     private final int auctionOwner;
     private final String location;
