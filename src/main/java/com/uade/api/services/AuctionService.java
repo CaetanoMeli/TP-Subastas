@@ -44,10 +44,10 @@ public class AuctionService {
                 .atZone(ZoneId.systemDefault())
                 .toInstant(), ZoneId.systemDefault());
 
-        date.plusHours(dateTime.getHour());
-        date.plusMinutes(dateTime.getMinute());
-        date.plusSeconds(dateTime.getSecond());
-        date.plusNanos(dateTime.getNano());
+        date = date.plusHours(dateTime.getHour());
+        date = date.plusMinutes(dateTime.getMinute());
+        date = date.plusSeconds(dateTime.getSecond());
+        date = date.plusNanos(dateTime.getNano());
 
         return AuctionModel.of(
                 auction.getId(),
