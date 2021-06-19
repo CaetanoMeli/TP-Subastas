@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Component
 public class AuctionMarshaller {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     public HomeDTO buildHome(List<AuctionModel> auctions, UserModel userModel) {
         return HomeDTO.of(
