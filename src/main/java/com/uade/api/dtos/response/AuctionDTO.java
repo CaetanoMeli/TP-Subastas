@@ -10,6 +10,7 @@ import lombok.Setter;
 public class AuctionDTO {
     public int id;
     public String title;
+    public String date;
     public String category;
     public String status;
     public String image;

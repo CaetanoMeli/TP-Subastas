@@ -86,6 +86,7 @@ public class AuctionMarshaller {
         return AuctionDTO.of(
             auctionModel.getNumber(),
             String.format("Subasta #%s", auctionModel.getNumber()),
+            auctionModel.getDate().toString(),
             auctionModel.getCategory().value(),
             auctionModel.getStatus().value(),
             auctionModel.getImage()
