@@ -1,24 +1,23 @@
 package com.uade.api.models;
 
+import com.uade.api.entities.Catalog;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-import java.sql.Time;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
-@Setter
-@RequiredArgsConstructor(staticName = "of")
+@Builder
 public class AuctionModel {
     private final Integer number;
     private final String image;
     private final ZonedDateTime date;
-    private final Time time;
-    private final int auctionOwner;
+    private final String auctionOwner;
     private final String location;
     private final int attendeeCapacity;
     private final DepositStatus hasDeposit;
     private final CategoryType category;
     private final AuctionStatus status;
+    private final List<Catalog> catalogList;
 }

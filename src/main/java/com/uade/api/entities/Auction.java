@@ -1,13 +1,20 @@
 package com.uade.api.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "subastas")
@@ -22,8 +29,6 @@ public class Auction {
     private Time time;
     @Column(name = "estado")
     private String status;
-    @Column(name = "subastador")
-    private int auctioner;
     @Column(name = "ubicacion")
     private String location;
     @Column(name = "capacidadAsistentes")
@@ -36,6 +41,13 @@ public class Auction {
     private String category;
     @Column(name = "image")
     private String image;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subastador", referencedColumnName = "identificador")
+    private Auctioner auctioner;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "auction", orphanRemoval = true)
+    private List<Catalog> catalogList;
 
     public int getId() {
         return id;
@@ -63,14 +75,6 @@ public class Auction {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public int getAuctioner() {
-        return auctioner;
-    }
-
-    public void setAuctioner(int auctioner) {
-        this.auctioner = auctioner;
     }
 
     public String getLocation() {
@@ -119,5 +123,21 @@ public class Auction {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Auctioner getAuctioner() {
+        return auctioner;
+    }
+
+    public void setAuctioner(Auctioner auctioner) {
+        this.auctioner = auctioner;
+    }
+
+    public List<Catalog> getCatalogList() {
+        return catalogList;
+    }
+
+    public void setCatalogList(List<Catalog> catalogList) {
+        this.catalogList = catalogList;
     }
 }

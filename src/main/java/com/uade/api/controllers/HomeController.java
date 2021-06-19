@@ -7,22 +7,19 @@ import com.uade.api.models.UserModel;
 import com.uade.api.services.AuctionService;
 import com.uade.api.services.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("auctions")
-public class AuctionController {
+public class HomeController {
 
     private final UserService userService;
     private final AuctionService auctionService;
     private final HomeMarshaller homeMarshaller;
 
-    public AuctionController(
+    public HomeController(
             UserService userService,
             AuctionService auctionService,
             HomeMarshaller homeMarshaller
@@ -32,8 +29,11 @@ public class AuctionController {
         this.homeMarshaller = homeMarshaller;
     }
 
-    @GetMapping(value = "/{id}")
-    public AuctionModel getAuction(@PathVariable(value = "id") Integer auctionId) {
-        return auctionService.getAuction(auctionId);
+    @GetMapping(value = "/home")
+    public HomeDTO getHome(@RequestParam(required = false) Integer userId) {
+        UserModel userModel = userService.getUser(userId);
+        List<AuctionModel> auctions = auctionService.getAuctions();
+
+        return homeMarshaller.buildHome(auctions, userModel);
     }
 }

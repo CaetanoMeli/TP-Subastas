@@ -1,11 +1,17 @@
 package com.uade.api.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "catalogos")
@@ -16,10 +22,15 @@ public class Catalog {
     private int id;
     @Column(name = "descripcion")
     private String description;
-    @Column(name = "subasta")
-    private int auction;
     @Column(name = "responsable")
     private int owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subasta", referencedColumnName = "identificador")
+    private Auction auction;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
+    private List<CatalogItem> catalogItems;
 
     public int getId() {
         return id;
@@ -33,19 +44,27 @@ public class Catalog {
         this.description = description;
     }
 
-    public int getAuction() {
-        return auction;
-    }
-
-    public void setAuction(int auction) {
-        this.auction = auction;
-    }
-
     public int getOwner() {
         return owner;
     }
 
     public void setOwner(int owner) {
         this.owner = owner;
+    }
+
+    public Auction getAuction() {
+        return auction;
+    }
+
+    public void setAuction(Auction auction) {
+        this.auction = auction;
+    }
+
+    public List<CatalogItem> getCatalogItems() {
+        return catalogItems;
+    }
+
+    public void setCatalogItems(List<CatalogItem> catalogItems) {
+        this.catalogItems = catalogItems;
     }
 }
