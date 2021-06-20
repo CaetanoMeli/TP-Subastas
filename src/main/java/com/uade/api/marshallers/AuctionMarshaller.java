@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class AuctionMarshaller {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm 'HS";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     public AuctionDetailDTO buildAuctionDetail(AuctionModel auction) {
