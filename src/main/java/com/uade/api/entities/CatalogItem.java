@@ -23,7 +23,7 @@ public class CatalogItem {
     @Column(name = "comision")
     private BigDecimal comission;
     @Column(name = "subastado")
-    private boolean auctioned;
+    private String auctioned;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "catalogo", referencedColumnName = "identificador")
@@ -53,11 +53,11 @@ public class CatalogItem {
         this.comission = comission;
     }
 
-    public boolean isAuctioned() {
+    public String isAuctioned() {
         return auctioned;
     }
 
-    public void setAuctioned(boolean auctioned) {
+    public void setAuctioned(String auctioned) {
         this.auctioned = auctioned;
     }
 

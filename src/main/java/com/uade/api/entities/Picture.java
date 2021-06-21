@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "fotos")
 public class Picture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

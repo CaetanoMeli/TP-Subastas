@@ -42,6 +42,10 @@ public class User {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "identificador")
+    private Owner owner;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "identificador")
     private Auctioner auctioner;
 
     public int getId() {
