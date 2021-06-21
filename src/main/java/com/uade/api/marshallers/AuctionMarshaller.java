@@ -48,14 +48,14 @@ public class AuctionMarshaller {
                 "Juan",
                 "$100",
                 catalog.getCatalogItems().stream()
-                    .findFirst()
-                        .map(catalogItem -> catalogItem.getProduct()
+                    .map(catalogItem -> catalogItem.getProduct()
                                 .getPictures()
                                 .stream()
+                                .findFirst()
                                 .map(Picture::getPhoto)
                                 .map(AuctionCatalogDTO.PictureDTO::of)
-                                .collect(Collectors.toList())
-                        ).orElse(List.of(AuctionCatalogDTO.PictureDTO.of(""))));
+                            .orElse(AuctionCatalogDTO.PictureDTO.of(""))
+                    ).collect(Collectors.toList()));
     }
 
 }
