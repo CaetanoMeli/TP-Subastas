@@ -21,7 +21,7 @@ public class Owner {
     @Column(name = "identificador")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
