@@ -32,8 +32,15 @@ public class Product {
     @Column(name = "descripcion_completa")
     private String completeDescription;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
     private List<CatalogItem> catalogItems;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
+    private List<Picture> pictures;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "duenio", referencedColumnName = "identificador")
+    private Owner owner;
 
     public int getId() {
         return id;
@@ -77,5 +84,21 @@ public class Product {
 
     public void setCatalogItems(List<CatalogItem> catalogItems) {
         this.catalogItems = catalogItems;
+    }
+
+    public List<Picture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<Picture> pictures) {
+        this.pictures = pictures;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 }

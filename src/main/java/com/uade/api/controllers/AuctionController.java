@@ -1,5 +1,6 @@
 package com.uade.api.controllers;
 
+import com.uade.api.dtos.response.AuctionCatalogDTO;
 import com.uade.api.dtos.response.AuctionDetailDTO;
 import com.uade.api.marshallers.AuctionMarshaller;
 import com.uade.api.models.AuctionModel;
@@ -29,5 +30,12 @@ public class AuctionController {
         AuctionModel auctionModel = auctionService.getAuction(auctionId);
 
         return auctionMarshaller.buildAuctionDetail(auctionModel);
+    }
+
+    @GetMapping(value = "/{id}/catalog")
+    public AuctionCatalogDTO getAuctionCatalog(@PathVariable(value = "id") Integer auctionId) {
+        AuctionModel auctionModel = auctionService.getAuction(auctionId);
+
+        return auctionMarshaller.buildAuctionCatalog(auctionModel);
     }
 }
