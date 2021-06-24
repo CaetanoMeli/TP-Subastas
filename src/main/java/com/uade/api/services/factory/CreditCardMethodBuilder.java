@@ -10,11 +10,15 @@ public class CreditCardMethodBuilder implements PaymentMethodBuilder {
     @Override
     public PaymentMethod build(PaymentMethodModel model, Client client) {
         String lastFourDigits = model.getBin().substring(model.getBin().length() - 4);
-        return PaymentMethod.builder()
-                .client(client)
-                .type(model.getType().value())
-                .lastFourDigits(lastFourDigits)
-                .company(model.getCompany())
-                .build();
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+
+        paymentMethod.setClient(client);
+        paymentMethod.setType(model.getType().value());
+        paymentMethod.setLastFourDigits(lastFourDigits);
+        paymentMethod.setCompany(model.getCompany());
+
+
+        return paymentMethod;
     }
 }

@@ -1,7 +1,5 @@
 package com.uade.api.entities;
 
-import lombok.Builder;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,11 +12,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-@Builder
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "identificador")
     private int id;
     @Column
     private String type;
@@ -37,6 +33,10 @@ public class PaymentMethod {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getType() {

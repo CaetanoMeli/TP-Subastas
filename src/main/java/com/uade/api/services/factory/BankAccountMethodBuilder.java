@@ -9,11 +9,13 @@ import org.springframework.stereotype.Component;
 public class BankAccountMethodBuilder implements PaymentMethodBuilder {
     @Override
     public PaymentMethod build(PaymentMethodModel model, Client client) {
-        return PaymentMethod.builder()
-                .client(client)
-                .type(model.getType().value())
-                .accountNumber(model.getNumber())
-                .company(model.getCompany())
-                .build();
+        PaymentMethod paymentMethod = new PaymentMethod();
+
+        paymentMethod.setClient(client);
+        paymentMethod.setType(model.getType().value());
+        paymentMethod.setAccountNumber(model.getNumber());
+        paymentMethod.setCompany(model.getCompany());
+
+        return paymentMethod;
     }
 }
