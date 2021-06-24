@@ -49,8 +49,8 @@ public class UserService {
                 user.getAddress(),
                 user.getPhone(),
                 UserStatus.fromString(user.getStatus()),
-                CategoryType.fromString(user.getClient().getCategory()),
-                ClientStatus.fromString(user.getClient().getClientStatus())
+                user.getClient() != null ? CategoryType.fromString(user.getClient().getCategory()) : null,
+                user.getClient() != null ? ClientStatus.fromString(user.getClient().getClientStatus()) : null
         );
     }
 
