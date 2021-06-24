@@ -62,6 +62,11 @@ public class UserController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    @GetMapping(value = "/{id}")
+    public UserModel getUser(@PathVariable Integer id) {
+        return userService.getUser(id);
+    }
+
     @GetMapping(value = "/validate")
     public UserDTO validateEmail(@RequestParam String email) {
         userValidator.validateEmail(email);
