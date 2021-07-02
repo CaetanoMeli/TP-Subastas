@@ -1,6 +1,5 @@
 package com.uade.api.models;
 
-import com.uade.api.entities.Catalog;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,6 +11,7 @@ import java.util.List;
 public class AuctionModel {
     private final Integer number;
     private final String image;
+    private final CurrencyType currencyType;
     private final ZonedDateTime date;
     private final String auctionOwner;
     private final String location;
@@ -19,5 +19,5 @@ public class AuctionModel {
     private final DepositStatus hasDeposit;
     private final CategoryType category;
     private final AuctionStatus status;
-    private final List<Catalog> catalogList;
+    private final List<CatalogModel> catalogList;
 }

@@ -73,7 +73,13 @@ public class UserController {
 
         UserModel userModel = userService.getUser(email);
 
-        return UserDTO.of(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getClientStatus().value());
+        return UserDTO.builder()
+                .userId(userModel.getId())
+                .firstName(userModel.getFirstName())
+                .lastName(userModel.getLastName())
+                .status(userModel.getClientStatus().value())
+                .category(userModel.getCategory().value())
+                .build();
     }
 
     @GetMapping(value = "/login")
@@ -82,7 +88,13 @@ public class UserController {
 
         UserModel userModel = userService.getUser(email, password);
 
-        return UserDTO.of(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getClientStatus().value());
+        return UserDTO.builder()
+                .userId(userModel.getId())
+                .firstName(userModel.getFirstName())
+                .lastName(userModel.getLastName())
+                .status(userModel.getClientStatus().value())
+                .category(userModel.getCategory().value())
+                .build();
     }
 
     @PostMapping(value = "/status")

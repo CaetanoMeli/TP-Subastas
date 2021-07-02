@@ -1,15 +1,12 @@
 package com.uade.api.dtos.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
-@Getter
-@Setter
-@AllArgsConstructor(staticName = "of")
+@Builder
 public class UserDTO {
     public Integer userId;
     public String firstName;
     public String lastName;
     public String status;
+    public String category;
 }

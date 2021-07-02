@@ -2,13 +2,13 @@ package com.uade.api.marshallers;
 
 import com.uade.api.dtos.response.AuctionCatalogDTO;
 import com.uade.api.dtos.response.AuctionDetailDTO;
-import com.uade.api.entities.Catalog;
-import com.uade.api.entities.Picture;
 import com.uade.api.models.AuctionModel;
+import com.uade.api.models.CatalogModel;
+import com.uade.api.models.ClientStatus;
+import com.uade.api.models.UserModel;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,7 +21,7 @@ public class AuctionMarshaller {
         String firstCatalogDescription = auction.getCatalogList()
                 .stream()
                 .findFirst()
-                .map(Catalog::getDescription)
+                .map(CatalogModel::getDescription)
                 .orElse("");
 
         return AuctionDetailDTO.of(
@@ -31,31 +31,30 @@ public class AuctionMarshaller {
         );
     }
 
-    public AuctionCatalogDTO buildAuctionCatalog(AuctionModel auction) {
+    public AuctionCatalogDTO buildAuctionCatalog(AuctionModel auction, UserModel userModel) {
         return AuctionCatalogDTO.of(
                 auction.getNumber(),
                 auction.getCatalogList().stream()
-                    .map(this::modelToArticleDTO)
+                    .map(catalog -> modelToArticleDTO(auction, catalog, userModel))
                     .collect(Collectors.toList()));
     }
 
-    private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(Catalog catalog) {
+    private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(AuctionModel auction, CatalogModel catalog, UserModel userModel) {
+        String auctionStatus = catalog.isAuctioned() ? "Subastado" : "Subastandose";
+        boolean userSameCategoryAsAuction = auction.getCategory().equals(userModel.getCategory());
+        boolean userIsVerified = ClientStatus.ADMITTED.equals(userModel.getClientStatus());
+
         return AuctionCatalogDTO.ArticleDTO.of(
-                String.format("Catalogo #%s", catalog.getId()),
-                "Subastandose",
-                true,
+                String.format("Catalogo #%s", catalog.getCatalogID()),
+                auctionStatus,
+                userIsVerified && !catalog.isAuctioned() && userSameCategoryAsAuction,
                 catalog.getDescription(),
-                "Juan",
-                "$100",
-                catalog.getCatalogItems().stream()
-                    .map(catalogItem -> catalogItem.getProduct()
-                                .getPictures()
-                                .stream()
-                                .findFirst()
-                                .map(Picture::getPhoto)
-                                .map(AuctionCatalogDTO.PictureDTO::of)
-                            .orElse(AuctionCatalogDTO.PictureDTO.of(""))
-                    ).collect(Collectors.toList()));
+                catalog.getOwner(),
+                auction.getCurrencyType().currencyId() + catalog.getBasePrice(),
+                catalog.getCatalogItemModels().stream()
+                    .map(CatalogModel.CatalogItemModel::getPhoto)
+                    .map(AuctionCatalogDTO.PictureDTO::of)
+                    .collect(Collectors.toList()));
     }
 
 }

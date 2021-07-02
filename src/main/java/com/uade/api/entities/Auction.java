@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "subastas")
 public class Auction {
     @Id
@@ -39,6 +44,8 @@ public class Auction {
     private String hasSecurity;
     @Column(name = "categoria")
     private String category;
+    @Column(name = "moneda")
+    private String currencyType;
     @Column(name = "image")
     private String image;
 
@@ -48,96 +55,4 @@ public class Auction {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "auction", orphanRemoval = true)
     private List<Catalog> catalogList;
-
-    public int getId() {
-        return id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getHasDeposit() {
-        return hasDeposit;
-    }
-
-    public void setHasDeposit(String hasDeposit) {
-        this.hasDeposit = hasDeposit;
-    }
-
-    public String getHasSecurity() {
-        return hasSecurity;
-    }
-
-    public void setHasSecurity(String hasSecurity) {
-        this.hasSecurity = hasSecurity;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Auctioner getAuctioner() {
-        return auctioner;
-    }
-
-    public void setAuctioner(Auctioner auctioner) {
-        this.auctioner = auctioner;
-    }
-
-    public List<Catalog> getCatalogList() {
-        return catalogList;
-    }
-
-    public void setCatalogList(List<Catalog> catalogList) {
-        this.catalogList = catalogList;
-    }
 }
