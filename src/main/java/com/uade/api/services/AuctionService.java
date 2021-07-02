@@ -123,6 +123,7 @@ public class AuctionService {
                         .findFirst()
                         .map(Picture::getPhoto)
                         .orElse(""))
+                .description(catalogItem.getProduct().getCatalogDescription())
                 .build();
     }
 

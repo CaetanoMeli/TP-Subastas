@@ -21,6 +21,7 @@ public class AuctionCatalogDTO {
         public String status;
         public boolean canBid;
         public String description;
+        public String catalogDescription;
         public String owner;
         public String basePrice;
         public List<PictureDTO> pictures;

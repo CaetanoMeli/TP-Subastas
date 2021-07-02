@@ -20,5 +20,6 @@ public class CatalogModel {
     @Builder
     public static class CatalogItemModel {
         private final String photo;
+        private final String description;
     }
 }

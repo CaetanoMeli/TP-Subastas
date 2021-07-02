@@ -47,8 +47,11 @@ public class AuctionMarshaller {
         return AuctionCatalogDTO.ArticleDTO.of(
                 String.format("Catalogo #%s", catalog.getCatalogID()),
                 auctionStatus,
-                userIsVerified && !catalog.isAuctioned() && userSameCategoryAsAuction,
+                userIsVerified && !catalog.isAuctioned() && userSameCategoryAsAuction, //TODO user cant have bid on another active auction. User cant bid on a product he owns
                 catalog.getDescription(),
+                catalog.getCatalogItemModels().stream()
+                        .map(CatalogModel.CatalogItemModel::getDescription)
+                        .collect(Collectors.joining("\n\n")),
                 catalog.getOwner(),
                 auction.getCurrencyType().currencyId() + catalog.getBasePrice(),
                 catalog.getCatalogItemModels().stream()
