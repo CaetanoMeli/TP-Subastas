@@ -39,7 +39,7 @@ public class AuctionController {
     }
 
     @GetMapping(value = "/{id}/catalog")
-    public AuctionCatalogDTO getAuctionCatalog(@PathVariable(value = "id") Integer auctionId, @RequestParam String userId) {
+    public AuctionCatalogDTO getAuctionCatalog(@PathVariable(value = "id") Integer auctionId, @RequestParam(required = false) Integer userId) {
         AuctionModel auctionModel = auctionService.getAuction(auctionId);
         UserModel userModel = null;
 
