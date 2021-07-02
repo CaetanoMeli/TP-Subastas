@@ -30,6 +30,7 @@ public class PaymentMethodMarshaller {
 
         return PaymentMethodsDTO.PaymentMethodDTO.builder()
                 .type(model.getType().value())
+                .approved(model.isApproved())
                 .company(model.getCompany())
                 .id(model.getId())
                 .number(number)

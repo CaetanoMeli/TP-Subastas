@@ -21,5 +21,6 @@ public class PaymentMethodsDTO {
         private String company;
         private String name;
         private String number;
+        private boolean approved;
     }
 }
