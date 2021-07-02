@@ -4,23 +4,29 @@ import com.uade.api.dtos.response.AuctionCatalogDTO;
 import com.uade.api.dtos.response.AuctionDetailDTO;
 import com.uade.api.marshallers.AuctionMarshaller;
 import com.uade.api.models.AuctionModel;
+import com.uade.api.models.UserModel;
 import com.uade.api.services.AuctionService;
+import com.uade.api.services.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("auctions")
 public class AuctionController {
 
+    private final UserService userService;
     private final AuctionService auctionService;
     private final AuctionMarshaller auctionMarshaller;
 
     public AuctionController(
+            UserService userService,
             AuctionService auctionService,
             AuctionMarshaller auctionMarshaller
     ) {
+        this.userService = userService;
         this.auctionService = auctionService;
         this.auctionMarshaller = auctionMarshaller;
     }
@@ -33,9 +39,14 @@ public class AuctionController {
     }
 
     @GetMapping(value = "/{id}/catalog")
-    public AuctionCatalogDTO getAuctionCatalog(@PathVariable(value = "id") Integer auctionId) {
+    public AuctionCatalogDTO getAuctionCatalog(@PathVariable(value = "id") Integer auctionId, @RequestParam String userId) {
         AuctionModel auctionModel = auctionService.getAuction(auctionId);
+        UserModel userModel = null;
 
-        return auctionMarshaller.buildAuctionCatalog(auctionModel);
+        if (userId != null) {
+            userModel = userService.getUser(userId);
+        }
+
+        return auctionMarshaller.buildAuctionCatalog(auctionModel, userModel);
     }
 }

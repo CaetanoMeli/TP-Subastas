@@ -41,8 +41,8 @@ public class AuctionMarshaller {
 
     private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(AuctionModel auction, CatalogModel catalog, UserModel userModel) {
         String auctionStatus = catalog.isAuctioned() ? "Subastado" : "Subastandose";
-        boolean userSameCategoryAsAuction = auction.getCategory().equals(userModel.getCategory());
-        boolean userIsVerified = ClientStatus.ADMITTED.equals(userModel.getClientStatus());
+        boolean userSameCategoryAsAuction = userModel != null && auction.getCategory().equals(userModel.getCategory());
+        boolean userIsVerified = userModel != null && ClientStatus.ADMITTED.equals(userModel.getClientStatus());
 
         return AuctionCatalogDTO.ArticleDTO.of(
                 String.format("Catalogo #%s", catalog.getCatalogID()),
