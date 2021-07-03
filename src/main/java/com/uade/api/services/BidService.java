@@ -49,11 +49,14 @@ public class BidService {
         Bid winningBid = catalogModel.getWinningBid();
 
         BigDecimal onePercentOfBasePrice = catalogModel.getBasePrice().movePointLeft(2);
-        BigDecimal twentyPercentOfLastWinningBid = winningBid != null ? catalogModel.getWinningBid().getAmount().movePointLeft(1).multiply(new BigDecimal(2)) : null;
+        BigDecimal currentValue = winningBid != null  ? catalogModel.getBasePrice().add(winningBid.getAmount()) : null;
+        BigDecimal twentyPercentOfLastWinningBid = currentValue != null ? currentValue.movePointLeft(1).multiply(new BigDecimal(2)) : null;
+
+        boolean isHigherThanWinningBid = winningBid == null || amount.compareTo(winningBid.getAmount()) > 0;
 
         boolean isGoldOrPlatinum = CategoryType.GOLD.priority() >= catalogModel.getCategoryType().priority();
 
-        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && (isGoldOrPlatinum || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
+        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && isHigherThanWinningBid && (isGoldOrPlatinum || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
 
         if (!isValidAmount) {
             throw new BadRequestException();
