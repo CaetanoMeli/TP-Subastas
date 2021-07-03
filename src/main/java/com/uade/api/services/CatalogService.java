@@ -69,6 +69,7 @@ public class CatalogService {
                 .winningBid(winningBid)
                 .categoryType(CategoryType.fromString(auctionCategory))
                 .owner(owner)
+                .entity(catalog)
                 .basePrice(basePrice)
                 .isAuctioned(isAuctioned(catalogItems))
                 .build();
