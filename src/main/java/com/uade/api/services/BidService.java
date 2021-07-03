@@ -63,6 +63,7 @@ public class BidService {
         bid.setOwner(catalogService.getOwner(catalogModel.getEntity()));
         bid.setClient(userModel.getEntity().getClient());
         bid.setAmount(amount);
+        bid.setDateCreated(new Date());
         bid.setCatalog(catalogModel.getEntity());
         bid.setComission(catalogService.getComission(catalogModel.getEntity()));
 
