@@ -1,13 +1,15 @@
 package com.uade.api.models;
 
+import com.uade.api.entities.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor(staticName = "of")
+@Builder
 @AllArgsConstructor
 public class UserModel {
     private final Integer id;
@@ -17,6 +19,8 @@ public class UserModel {
     private final String email;
     private final String address;
     private final String phone;
+    private final User entity;
+    private final boolean hasActiveBid;
     private UserStatus status;
     private CategoryType category;
     private ClientStatus clientStatus;

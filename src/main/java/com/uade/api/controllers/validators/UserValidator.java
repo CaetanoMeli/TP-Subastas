@@ -1,5 +1,6 @@
 package com.uade.api.controllers.validators;
 
+import com.uade.api.dtos.request.NewBidDTO;
 import com.uade.api.dtos.request.NewCodeDTO;
 import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewUserDTO;
@@ -36,6 +37,12 @@ public class UserValidator implements Validator {
 
     public void validateEmail(String email) {
         nonEmptyString(email);
+    }
+
+    public void validateNewBid(NewBidDTO dto) {
+        nonNull(dto);
+        nonNull(dto.catalogId);
+        nonNull(dto.amount);
     }
 
     private void validatePassword(String password) {

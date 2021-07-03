@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,8 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "subastadores")
 public class Auctioner {
     @Id
@@ -30,28 +35,4 @@ public class Auctioner {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "auctioner", orphanRemoval = true)
     private List<Auction> auction;
-
-    public String getDrivingLicense() {
-        return drivingLicense;
-    }
-
-    public void setDrivingLicense(String drivingLicense) {
-        this.drivingLicense = drivingLicense;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

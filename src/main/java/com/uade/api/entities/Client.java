@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,8 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "clientes")
 public class Client {
     @Id
@@ -36,51 +41,6 @@ public class Client {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
     private List<PaymentMethod> paymentMethods;
 
-    public int getCountryNumber() {
-        return countryNumber;
-    }
-
-    public void setCountryNumber(int countryNumber) {
-        this.countryNumber = countryNumber;
-    }
-
-    public String getClientStatus() {
-        return clientStatus;
-    }
-
-    public void setClientStatus(String clientStatus) {
-        this.clientStatus = clientStatus;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public int getVerifier() {
-        return verifier;
-    }
-
-    public void setVerifier(int verifier) {
-        this.verifier = verifier;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<PaymentMethod> getPaymentMethods() {
-        return paymentMethods;
-    }
-
-    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
-        this.paymentMethods = paymentMethods;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<Bid> bids;
 }

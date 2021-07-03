@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,8 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "duenios")
 public class Owner {
     @Id
@@ -27,23 +32,6 @@ public class Owner {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
     private List<Product> products;
 
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    private List<Bid> bids;
 }

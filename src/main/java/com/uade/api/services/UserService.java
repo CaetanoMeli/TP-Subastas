@@ -1,6 +1,5 @@
 package com.uade.api.services;
 
-import com.uade.api.entities.Client;
 import com.uade.api.entities.User;
 import com.uade.api.exceptions.BadRequestException;
 import com.uade.api.exceptions.InternalServerException;
@@ -18,8 +17,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final CatalogService catalogService;
+
+    public UserService(UserRepository userRepository, CatalogService catalogService) {
         this.userRepository = userRepository;
+        this.catalogService = catalogService;
     }
 
     public void registerUser(UserModel userModel) {
@@ -40,41 +42,53 @@ public class UserService {
             throw new NotFoundException();
         }
 
-        return new UserModel(
-                user.getId(),
-                user.getDni(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getAddress(),
-                user.getPhone(),
-                UserStatus.fromString(user.getStatus()),
-                user.getClient() != null ? CategoryType.fromString(user.getClient().getCategory()) : null,
-                user.getClient() != null ? ClientStatus.fromString(user.getClient().getClientStatus()) : null
-        );
+        return UserModel.builder()
+                .id(user.getId())
+                .dni(user.getDni())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .phone(user.getPhone())
+                .status(UserStatus.fromString(user.getStatus()))
+                .category(user.getClient() != null ? CategoryType.fromString(user.getClient().getCategory()) : null)
+                .clientStatus(user.getClient() != null ? ClientStatus.fromString(user.getClient().getClientStatus()) : null)
+                .build();
     }
 
     public UserModel getUser(Integer userId) {
+        return getUser(userId, false);
+    }
+
+    public UserModel getUser(Integer userId, boolean addBidInfo) {
         UserModel model = null;
         if (userId != null) {
             User user = userRepository.findById(userId.intValue());
+            boolean userHasActiveBid = false;
 
             if (user == null) {
                 throw new NotFoundException();
             }
 
-            model = new UserModel(
-                    user.getId(),
-                    user.getDni(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.getAddress(),
-                    user.getPhone(),
-                    UserStatus.fromString(user.getStatus()),
-                    CategoryType.fromString(user.getClient().getCategory()),
-                    ClientStatus.fromString(user.getClient().getClientStatus())
-            );
+            if (addBidInfo) {
+                userHasActiveBid = user.getClient().getBids()
+                        .stream()
+                        .anyMatch(bid -> !catalogService.isAuctioned(bid.getCatalog()));
+            }
+
+            model = UserModel.builder()
+                    .id(user.getId())
+                    .dni(user.getDni())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .email(user.getEmail())
+                    .address(user.getAddress())
+                    .phone(user.getPhone())
+                    .hasActiveBid(userHasActiveBid)
+                    .status(UserStatus.fromString(user.getStatus()))
+                    .category(CategoryType.fromString(user.getClient().getCategory()))
+                    .clientStatus(ClientStatus.fromString(user.getClient().getClientStatus()))
+                    .build();
         }
 
         return model;
@@ -91,18 +105,18 @@ public class UserService {
             throw new BadRequestException();
         }
 
-        return new UserModel(
-                user.getId(),
-                user.getDni(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getAddress(),
-                user.getPhone(),
-                UserStatus.fromString(user.getStatus()),
-                CategoryType.fromString(user.getClient().getCategory()),
-                ClientStatus.fromString(user.getClient().getClientStatus())
-        );
+        return UserModel.builder()
+                .id(user.getId())
+                .dni(user.getDni())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .phone(user.getPhone())
+                .status(UserStatus.fromString(user.getStatus()))
+                .category(CategoryType.fromString(user.getClient().getCategory()))
+                .clientStatus(ClientStatus.fromString(user.getClient().getClientStatus()))
+                .build();
     }
 
     public String updateUserCode(String email) {
@@ -153,5 +167,4 @@ public class UserService {
 
         return user;
     }
-
 }

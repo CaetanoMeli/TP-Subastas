@@ -41,18 +41,20 @@ public class AuctionMarshaller {
 
     private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(AuctionModel auction, CatalogModel catalog, UserModel userModel) {
         String auctionStatus = catalog.isAuctioned() ? "Subastado" : "Subastandose";
+        String ownerName = catalog.getOwner().getFirstName() + " " + catalog.getOwner().getLastName();
+        boolean userSameAsOwner = userModel != null && userModel.getId().equals(catalog.getOwner().getId());
         boolean userSameCategoryAsAuction = userModel != null && auction.getCategory().priority() >= userModel.getCategory().priority();
         boolean userIsVerified = userModel != null && ClientStatus.ADMITTED.equals(userModel.getClientStatus());
 
         return AuctionCatalogDTO.ArticleDTO.of(
                 String.format("Catalogo #%s", catalog.getCatalogID()),
                 auctionStatus,
-                userIsVerified && !catalog.isAuctioned() && userSameCategoryAsAuction, //TODO user cant have bid on another active auction. User cant bid on a product he owns
+                userIsVerified && !userSameAsOwner && !userModel.isHasActiveBid() && !catalog.isAuctioned() && userSameCategoryAsAuction,
                 catalog.getDescription(),
                 catalog.getCatalogItemModels().stream()
                         .map(CatalogModel.CatalogItemModel::getDescription)
                         .collect(Collectors.joining("\n\n")),
-                catalog.getOwner(),
+                ownerName,
                 auction.getCurrencyType().currencyId() + catalog.getBasePrice(),
                 catalog.getCatalogItemModels().stream()
                     .map(CatalogModel.CatalogItemModel::getPhoto)

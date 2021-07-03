@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "fotos")
 public class Picture {
     @Id
@@ -25,16 +30,4 @@ public class Picture {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto", referencedColumnName = "identificador")
     private Product product;
-
-    public int getId() {
-        return id;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
 }

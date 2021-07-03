@@ -2,6 +2,7 @@ package com.uade.api.controllers;
 
 import com.uade.api.controllers.validators.PaymentTypeValidator;
 import com.uade.api.controllers.validators.UserValidator;
+import com.uade.api.dtos.request.NewBidDTO;
 import com.uade.api.dtos.request.NewCodeDTO;
 import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewPaymentMethodDTO;
@@ -13,6 +14,8 @@ import com.uade.api.marshallers.PaymentMethodMarshaller;
 import com.uade.api.models.PaymentMethodModel;
 import com.uade.api.models.PaymentMethodType;
 import com.uade.api.models.UserModel;
+import com.uade.api.services.BidService;
+import com.uade.api.services.CatalogService;
 import com.uade.api.services.ClientService;
 import com.uade.api.services.PaymentMethodService;
 import com.uade.api.services.UserService;
@@ -35,6 +38,7 @@ public class UserController {
 
     private final UserService userService;
     private final ClientService clientService;
+    private final BidService bidService;
     private final PaymentMethodService paymentMethodService;
 
     private final UserValidator userValidator;
@@ -42,9 +46,10 @@ public class UserController {
 
     private final PaymentMethodMarshaller paymentMethodMarshaller;
 
-    public UserController(UserService userService, ClientService clientService, PaymentMethodService paymentMethodService, UserValidator userValidator, PaymentTypeValidator paymentTypeValidator, PaymentMethodMarshaller paymentMethodMarshaller) {
+    public UserController(UserService userService, ClientService clientService, BidService bidService, PaymentMethodService paymentMethodService, UserValidator userValidator, PaymentTypeValidator paymentTypeValidator, PaymentMethodMarshaller paymentMethodMarshaller) {
         this.userService = userService;
         this.clientService = clientService;
+        this.bidService = bidService;
         this.paymentMethodService = paymentMethodService;
         this.userValidator = userValidator;
         this.paymentTypeValidator = paymentTypeValidator;
@@ -55,7 +60,14 @@ public class UserController {
     public ResponseEntity registerUser(@RequestBody NewUserDTO dto) {
         userValidator.validateNewUser(dto);
 
-        UserModel model = UserModel.of(null, dto.dni, dto.firstName, dto.lastName, dto.email, dto.address, dto.phone);
+        UserModel model = UserModel.builder()
+                .dni(dto.dni)
+                .firstName(dto.firstName)
+                .lastName(dto.lastName)
+                .email(dto.email)
+                .address(dto.address)
+                .phone(dto.phone)
+                .build();
 
         userService.registerUser(model);
 
@@ -148,6 +160,17 @@ public class UserController {
         List<PaymentMethodModel> paymentMethods = clientService.getClientPaymentMethods(id);
 
         return paymentMethodMarshaller.buildPaymentMethods(paymentMethods);
+    }
+
+    @PutMapping(value = "/{id}/bids")
+    public ResponseEntity addBid(@PathVariable int id, @RequestBody NewBidDTO dto) {
+        userValidator.validateNewBid(dto);
+
+        UserModel model = userService.getUser(id);
+
+        bidService.addBid(model, dto.amount, dto.catalogId);
+
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/logout")

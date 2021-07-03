@@ -1,5 +1,8 @@
 package com.uade.api.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,8 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "catalogos")
 public class Catalog {
     @Id
@@ -32,39 +37,6 @@ public class Catalog {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
     private List<CatalogItem> catalogItems;
 
-    public int getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getOwner() {
-        return owner;
-    }
-
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    public Auction getAuction() {
-        return auction;
-    }
-
-    public void setAuction(Auction auction) {
-        this.auction = auction;
-    }
-
-    public List<CatalogItem> getCatalogItems() {
-        return catalogItems;
-    }
-
-    public void setCatalogItems(List<CatalogItem> catalogItems) {
-        this.catalogItems = catalogItems;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
+    private List<Bid> bids;
 }
