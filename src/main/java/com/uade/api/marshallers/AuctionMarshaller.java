@@ -49,6 +49,7 @@ public class AuctionMarshaller {
         return AuctionCatalogDTO.ArticleDTO.of(
                 String.format("Catalogo #%s", catalog.getCatalogID()),
                 auctionStatus,
+                catalog.getCatalogID(),
                 userIsVerified && !userSameAsOwner && !userModel.isHasActiveBid() && !catalog.isAuctioned() && userSameCategoryAsAuction,
                 catalog.getDescription(),
                 catalog.getCatalogItemModels().stream()

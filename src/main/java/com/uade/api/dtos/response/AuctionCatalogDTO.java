@@ -19,6 +19,7 @@ public class AuctionCatalogDTO {
     public static class ArticleDTO {
         public String title;
         public String status;
+        public int catalogId;
         public boolean canBid;
         public String description;
         public String catalogDescription;
