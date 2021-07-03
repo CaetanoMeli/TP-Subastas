@@ -84,6 +84,7 @@ public class UserService {
                     .email(user.getEmail())
                     .address(user.getAddress())
                     .phone(user.getPhone())
+                    .entity(user)
                     .hasActiveBid(userHasActiveBid)
                     .status(UserStatus.fromString(user.getStatus()))
                     .category(CategoryType.fromString(user.getClient().getCategory()))

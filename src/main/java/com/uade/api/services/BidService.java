@@ -46,12 +46,14 @@ public class BidService {
             throw new BadRequestException();
         }
 
+        Bid winningBid = catalogModel.getWinningBid();
+
         BigDecimal onePercentOfBasePrice = catalogModel.getBasePrice().movePointLeft(2);
-        BigDecimal twentyPercentOfLastWinningBid = catalogModel.getWinningBid().getAmount().movePointLeft(1).multiply(new BigDecimal(2));
+        BigDecimal twentyPercentOfLastWinningBid = winningBid != null ? catalogModel.getWinningBid().getAmount().movePointLeft(1).multiply(new BigDecimal(2)) : null;
 
         boolean isGoldOrPlatinum = CategoryType.GOLD.priority() >= catalogModel.getCategoryType().priority();
 
-        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && (isGoldOrPlatinum || amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
+        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && (isGoldOrPlatinum || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
 
         if (!isValidAmount) {
             throw new BadRequestException();
@@ -79,6 +81,8 @@ public class BidService {
 
         ChronoUnit unit = TimeUnit.fromString(bidConfig.getUnit()).chronoUnit();
 
-        return unit.between(catalogModel.getWinningBid().getDateCreated().toInstant(), new Date().toInstant()) < bidConfig.getMaxTimeAfterLastBid();
+        Bid winningBid = catalogModel.getWinningBid();
+
+        return winningBid != null && unit.between(catalogModel.getWinningBid().getDateCreated().toInstant(), new Date().toInstant()) < bidConfig.getMaxTimeAfterLastBid();
     }
 }
