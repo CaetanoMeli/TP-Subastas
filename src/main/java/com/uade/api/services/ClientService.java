@@ -16,6 +16,7 @@ import com.uade.api.repositories.ClientRepository;
 import com.uade.api.repositories.UserRepository;
 import com.uade.api.utils.RandomNumberGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +27,11 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    public ClientService(ClientRepository clientRepository) {
+    private final PaymentMethodService paymentMethodService;
+
+    public ClientService(ClientRepository clientRepository, PaymentMethodService paymentMethodService) {
         this.clientRepository = clientRepository;
+        this.paymentMethodService = paymentMethodService;
     }
 
     public Client getClientById(Integer id) {
@@ -53,6 +57,25 @@ public class ClientService {
         ).orElseThrow(NotFoundException::new);
     }
 
+    @Transactional
+    public void deletePaymentMethod(Integer id, Integer paymentMethodId) {
+        Optional<Client> optionalClient = clientRepository.findById(id);
+
+        optionalClient.ifPresentOrElse(client -> {
+            List<PaymentMethod> paymentMethods = client.getPaymentMethods();
+
+            PaymentMethod paymentMethodToDelete = paymentMethods.stream()
+                    .filter(paymentMethod -> paymentMethodId.equals(paymentMethod.getId()))
+                    .findFirst()
+                    .orElseThrow(NotFoundException::new);
+
+            paymentMethods.remove(paymentMethodToDelete);
+            paymentMethodService.deletePaymentMethod(paymentMethodToDelete);
+            }, () -> {
+            throw new NotFoundException();
+        });
+    }
+
     public void updateUserStatus(Integer id) {
         Optional<Client> optionalClient = clientRepository.findById(id);
 
@@ -66,6 +89,7 @@ public class ClientService {
 
     private PaymentMethodModel mapToPaymentMethodModel(PaymentMethod paymentMethod) {
         return PaymentMethodModel.builder()
+                .id(paymentMethod.getId())
                 .type(PaymentMethodType.fromString(paymentMethod.getType()))
                 .number(paymentMethod.getAccountNumber())
                 .approved("yes".equals(paymentMethod.getApproved()))

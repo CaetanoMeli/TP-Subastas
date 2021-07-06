@@ -21,6 +21,7 @@ import com.uade.api.services.PaymentMethodService;
 import com.uade.api.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -160,6 +161,13 @@ public class UserController {
         List<PaymentMethodModel> paymentMethods = clientService.getClientPaymentMethods(id);
 
         return paymentMethodMarshaller.buildPaymentMethods(paymentMethods);
+    }
+
+    @DeleteMapping(value = "/{id}/payment_methods/{paymentMethodId}")
+    public ResponseEntity deletePaymentMethod(@PathVariable int id, @PathVariable int paymentMethodId) {
+        clientService.deletePaymentMethod(id, paymentMethodId);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(value = "/{id}/bids")
