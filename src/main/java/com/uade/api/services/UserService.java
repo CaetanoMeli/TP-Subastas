@@ -1,16 +1,29 @@
 package com.uade.api.services;
 
+import com.uade.api.entities.Bid;
+import com.uade.api.entities.CatalogItem;
+import com.uade.api.entities.Picture;
+import com.uade.api.entities.Product;
 import com.uade.api.entities.User;
 import com.uade.api.exceptions.BadRequestException;
 import com.uade.api.exceptions.InternalServerException;
 import com.uade.api.exceptions.NotFoundException;
 import com.uade.api.models.CategoryType;
 import com.uade.api.models.ClientStatus;
+import com.uade.api.models.ProductModel;
+import com.uade.api.models.ProductStatus;
 import com.uade.api.models.UserModel;
 import com.uade.api.models.UserStatus;
 import com.uade.api.repositories.UserRepository;
 import com.uade.api.utils.RandomNumberGenerator;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -18,10 +31,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final CatalogService catalogService;
+    private final ProductService productService;
 
-    public UserService(UserRepository userRepository, CatalogService catalogService) {
+    public UserService(UserRepository userRepository, CatalogService catalogService, ProductService productService) {
         this.userRepository = userRepository;
         this.catalogService = catalogService;
+        this.productService = productService;
     }
 
     public void registerUser(UserModel userModel) {
@@ -154,6 +169,61 @@ public class UserService {
         user.setPassword(password);
 
         userRepository.save(user);
+    }
+
+    public List<ProductModel> getArticles(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        return userOptional
+                .map(user -> user.getOwner().getProducts()
+                        .stream()
+                        .map(this::mapToProductModel)
+                        .collect(Collectors.toList())
+                ).orElseThrow(NotFoundException::new);
+    }
+
+    public void addArticle(Integer id, ProductModel productModel) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        userOptional.ifPresentOrElse(user -> productService.addProduct(productModel, user.getOwner()), () -> {
+            throw new NotFoundException();
+        });
+    }
+
+    private ProductModel mapToProductModel(Product product) {
+        //If product has no catalog items it pending approval. We'll assume only 1 item catalog is possible per product
+        CatalogItem catalogItem = product.getCatalogItems().stream().findFirst().orElse(null);
+        var productModelBuilder = ProductModel.builder()
+                .images(product.getPictures().stream().map(Picture::getPhoto).collect(Collectors.toList()))
+                .description(product.getCompleteDescription())
+                .fullDescription(product.getCatalogDescription())
+                .productStatus(ProductStatus.PENDING_APPROVAL);
+
+        if (catalogItem != null) {
+            if ("si".equals(product.getAvailable())) {
+                Bid bid = catalogItem.getCatalog().getBids().stream()
+                        .max(Comparator.comparing(Bid::getAmount))
+                        .orElse(null);
+
+                productModelBuilder
+                        .basePrice(catalogItem.getBasePrice())
+                        .commission(catalogItem.getComission())
+                        .assignedDate(catalogItem.getCatalog().getAuction().getDate())
+                        .assignedAuction(catalogItem.getCatalog().getAuction().getId());
+
+                if ("si".equals(catalogItem.getAuctioned()) && bid != null) {
+                    productModelBuilder.productStatus(ProductStatus.SOLD)
+                            .soldDate(bid.getDateCreated())
+                            .soldAmount(bid.getAmount())
+                            .earnings(bid.getAmount().subtract(catalogItem.getComission()));
+                }
+            } else {
+                productModelBuilder.productStatus(ProductStatus.PENDING_CONFIRMATION);
+            }
+        }
+
+
+        return productModelBuilder.build();
     }
 
     private User mapModelToEntity(UserModel userModel) {

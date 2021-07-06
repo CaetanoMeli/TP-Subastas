@@ -2,6 +2,7 @@ package com.uade.api.controllers;
 
 import com.uade.api.controllers.validators.PaymentTypeValidator;
 import com.uade.api.controllers.validators.UserValidator;
+import com.uade.api.dtos.request.NewArticleDTO;
 import com.uade.api.dtos.request.NewBidDTO;
 import com.uade.api.dtos.request.NewCodeDTO;
 import com.uade.api.dtos.request.NewPasswordDTO;
@@ -13,9 +14,9 @@ import com.uade.api.entities.Client;
 import com.uade.api.marshallers.PaymentMethodMarshaller;
 import com.uade.api.models.PaymentMethodModel;
 import com.uade.api.models.PaymentMethodType;
+import com.uade.api.models.ProductModel;
 import com.uade.api.models.UserModel;
 import com.uade.api.services.BidService;
-import com.uade.api.services.CatalogService;
 import com.uade.api.services.ClientService;
 import com.uade.api.services.PaymentMethodService;
 import com.uade.api.services.UserService;
@@ -136,6 +137,26 @@ public class UserController {
         userService.updateUserPassword(dto.email, dto.code, dto.password);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/{id}/articles")
+    public ResponseEntity addArticle(@PathVariable int id, @RequestBody NewArticleDTO dto) {
+        userValidator.validateNewArticle(dto);
+
+        ProductModel productModel = ProductModel.builder()
+                .images(dto.images)
+                .description(dto.description)
+                .fullDescription(dto.fullDescription)
+                .build();
+
+        userService.addArticle(id, productModel);
+
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/{id}/articles")
+    public List<ProductModel> getArticles(@PathVariable int id) {
+        return userService.getArticles(id);
     }
 
     @PutMapping(value = "/{id}/payment_methods")

@@ -46,4 +46,8 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "duenio", referencedColumnName = "identificador")
     private Owner owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "revisor", referencedColumnName = "identificador")
+    private Employee employee;
 }
