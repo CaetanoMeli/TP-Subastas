@@ -208,6 +208,7 @@ public class UserService {
                 productModelBuilder
                         .basePrice(catalogItem.getBasePrice())
                         .commission(catalogItem.getComission())
+                        .productStatus(ProductStatus.ASSIGNED_AUCTION)
                         .assignedDate(catalogItem.getCatalog().getAuction().getDate())
                         .assignedAuction(catalogItem.getCatalog().getAuction().getId());
 
