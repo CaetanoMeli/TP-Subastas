@@ -9,8 +9,10 @@ import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewPaymentMethodDTO;
 import com.uade.api.dtos.request.NewUserDTO;
 import com.uade.api.dtos.response.PaymentMethodsDTO;
+import com.uade.api.dtos.response.ProductDTO;
 import com.uade.api.dtos.response.UserDTO;
 import com.uade.api.entities.Client;
+import com.uade.api.marshallers.ArticleMarshaller;
 import com.uade.api.marshallers.PaymentMethodMarshaller;
 import com.uade.api.models.PaymentMethodModel;
 import com.uade.api.models.PaymentMethodType;
@@ -47,8 +49,9 @@ public class UserController {
     private final PaymentTypeValidator paymentTypeValidator;
 
     private final PaymentMethodMarshaller paymentMethodMarshaller;
+    private final ArticleMarshaller articleMarshaller;
 
-    public UserController(UserService userService, ClientService clientService, BidService bidService, PaymentMethodService paymentMethodService, UserValidator userValidator, PaymentTypeValidator paymentTypeValidator, PaymentMethodMarshaller paymentMethodMarshaller) {
+    public UserController(UserService userService, ClientService clientService, BidService bidService, PaymentMethodService paymentMethodService, UserValidator userValidator, PaymentTypeValidator paymentTypeValidator, PaymentMethodMarshaller paymentMethodMarshaller, ArticleMarshaller articleMarshaller) {
         this.userService = userService;
         this.clientService = clientService;
         this.bidService = bidService;
@@ -56,6 +59,7 @@ public class UserController {
         this.userValidator = userValidator;
         this.paymentTypeValidator = paymentTypeValidator;
         this.paymentMethodMarshaller = paymentMethodMarshaller;
+        this.articleMarshaller = articleMarshaller;
     }
 
     @PostMapping(value = "")
@@ -155,8 +159,8 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}/articles")
-    public List<ProductModel> getArticles(@PathVariable int id) {
-        return userService.getArticles(id);
+    public List<ProductDTO> getArticles(@PathVariable int id) {
+        return articleMarshaller.buildArticles(userService.getArticles(id));
     }
 
     @PutMapping(value = "/{id}/payment_methods")
