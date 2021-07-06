@@ -22,6 +22,6 @@ public enum DepositStatus {
         return Stream.of(DepositStatus.values())
                 .filter(userStatus -> userStatus.value().equals(status))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_status"));
     }
 }

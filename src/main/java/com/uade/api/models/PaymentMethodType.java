@@ -22,6 +22,6 @@ public enum PaymentMethodType {
         return Stream.of(PaymentMethodType.values())
                 .filter(userStatus -> userStatus.value().equals(type))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_type"));
     }
 }

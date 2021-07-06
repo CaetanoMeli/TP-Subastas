@@ -23,6 +23,6 @@ public enum UserStatus {
         return Stream.of(UserStatus.values())
                 .filter(userStatus -> userStatus.value().equals(status))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_status"));
     }
 }

@@ -1,7 +1,19 @@
 package com.uade.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+public class InternalServerException extends RuntimeException {
+    private String code;
 
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-public class InternalServerException extends RuntimeException {}
+    public InternalServerException() {
+        super();
+        this.code = "server_error";
+    }
+
+    public InternalServerException(String message) {
+        super(message);
+        this.code = "server_error";
+    }
+
+    public String getCode() {
+        return code;
+    }
+}

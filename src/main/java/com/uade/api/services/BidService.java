@@ -35,15 +35,20 @@ public class BidService {
         CatalogModel catalogModel = catalogService.getCatalog(catalogId);
 
         if (catalogModel.isAuctioned()) {
-            throw new BadRequestException();
+            throw new BadRequestException("already_auctioned");
         }
 
         boolean userHasActiveBid = userModel.getEntity().getClient().getBids()
                 .stream()
+                .filter(bid -> !catalogId.equals(bid.getCatalog().getId()))
                 .anyMatch(bid -> !catalogService.isAuctioned(bid.getCatalog()));
 
-        if (userHasActiveBid || maxTimeElapsed(catalogModel)) {
-            throw new BadRequestException();
+        if (userHasActiveBid) {
+            throw new BadRequestException("user_has_active_bid");
+        }
+
+        if (maxTimeElapsed(catalogModel)) {
+            throw new BadRequestException("max_time_elapsed");
         }
 
         Bid winningBid = catalogModel.getWinningBid();
@@ -59,7 +64,7 @@ public class BidService {
         boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && isHigherThanWinningBid && (isGoldOrPlatinum || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
 
         if (!isValidAmount) {
-            throw new BadRequestException();
+            throw new BadRequestException("invalid_amount");
         }
 
         Bid bid = new Bid();

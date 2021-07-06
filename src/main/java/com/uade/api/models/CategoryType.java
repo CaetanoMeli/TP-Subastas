@@ -31,6 +31,6 @@ public enum CategoryType {
         return Stream.of(CategoryType.values())
                 .filter(userStatus -> userStatus.value().equals(category))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_category"));
     }
 }

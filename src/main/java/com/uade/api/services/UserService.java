@@ -103,7 +103,7 @@ public class UserService {
         }
 
         if (!user.getPassword().equals(password)) {
-            throw new BadRequestException();
+            throw new BadRequestException("invalid_password");
         }
 
         return UserModel.builder()
@@ -128,7 +128,7 @@ public class UserService {
         }
 
         if (ClientStatus.ADMITTED.value().equals(user.getClient().getClientStatus())) {
-            throw new BadRequestException();
+            throw new BadRequestException("non_admitted_user");
         }
 
         String newCode = RandomNumberGenerator.generateRandomNumber();
@@ -148,7 +148,7 @@ public class UserService {
         }
 
         if (ClientStatus.ADMITTED.value().equals(user.getClient().getClientStatus()) && user.getCode() == null || !user.getCode().equals(code)) {
-            throw new BadRequestException();
+            throw new BadRequestException("non_admitted_user_or_invalid_code");
         }
 
         user.setPassword(password);

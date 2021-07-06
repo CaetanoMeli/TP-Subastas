@@ -30,6 +30,6 @@ public enum TimeUnit {
         return Stream.of(TimeUnit.values())
                 .filter(userStatus -> userStatus.value().equals(unit))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_unit"));
     }
 }

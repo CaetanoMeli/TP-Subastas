@@ -29,6 +29,6 @@ public enum CurrencyType {
         return Stream.of(CurrencyType.values())
                 .filter(userStatus -> userStatus.value().equals(type))
                 .findFirst()
-                .orElseThrow(InternalServerException::new);
+                .orElseThrow(() -> new InternalServerException("invalid_type"));
     }
 }

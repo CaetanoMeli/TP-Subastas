@@ -24,7 +24,7 @@ public class PaymentTypeValidator implements Validator {
 
         Optional.ofNullable(VALIDATOR_PER_TYPE.get(newPaymentMethodDTO.type))
             .ifPresentOrElse(validator -> validator.validate(newPaymentMethodDTO), () -> {
-                throw new BadRequestException();
+                throw new BadRequestException("invalid_payment_method");
             });
     }
 }
