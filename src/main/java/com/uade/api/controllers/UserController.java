@@ -102,8 +102,20 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public UserModel getUser(@PathVariable Integer id) {
-        return userService.getUser(id);
+    public UserDTO getUser(@PathVariable Integer id) {
+        UserModel userModel = userService.getUser(id);
+
+        return UserDTO.builder()
+                .userId(userModel.getId())
+                .dni(userModel.getDni())
+                .email(userModel.getEmail())
+                .phone(userModel.getPhone())
+                .address(userModel.getAddress())
+                .firstName(userModel.getFirstName())
+                .lastName(userModel.getLastName())
+                .status(userModel.getClientStatus().value())
+                .category(userModel.getCategory().value())
+                .build();
     }
 
     @GetMapping(value = "/validate")
