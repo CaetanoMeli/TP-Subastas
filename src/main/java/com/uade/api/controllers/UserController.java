@@ -82,11 +82,12 @@ public class UserController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = "")
-    public ResponseEntity updateUser(@RequestBody UpdateUserDTO dto) {
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity updateUser(@PathVariable Integer id, @RequestBody UpdateUserDTO dto) {
         userValidator.validateUpdateUser(dto);
 
         UserModel model = UserModel.builder()
+                .id(id)
                 .firstName(dto.firstName)
                 .lastName(dto.lastName)
                 .password(dto.password)
