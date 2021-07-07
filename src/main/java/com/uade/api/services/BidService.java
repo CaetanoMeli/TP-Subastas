@@ -34,6 +34,10 @@ public class BidService {
     public void addBid(UserModel userModel, BigDecimal amount, Integer catalogId) {
         CatalogModel catalogModel = catalogService.getCatalog(catalogId);
 
+        if (userModel.getId() == catalogModel.getOwner().getId()) {
+            throw new BadRequestException("user_is_owner");
+        }
+
         if (catalogModel.isAuctioned()) {
             throw new BadRequestException("already_auctioned");
         }
@@ -52,6 +56,10 @@ public class BidService {
         }
 
         Bid winningBid = catalogModel.getWinningBid();
+
+        if (winningBid != null && winningBid.getOwner().getId() == userModel.getId()) {
+            throw new BadRequestException("user_already_has_winning_bid");
+        }
 
         BigDecimal onePercentOfBasePrice = catalogModel.getBasePrice().movePointLeft(2);
         BigDecimal currentValue = winningBid != null  ? catalogModel.getBasePrice().add(winningBid.getAmount()) : null;
