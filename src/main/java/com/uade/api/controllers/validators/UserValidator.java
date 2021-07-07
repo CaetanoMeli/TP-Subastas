@@ -5,6 +5,7 @@ import com.uade.api.dtos.request.NewBidDTO;
 import com.uade.api.dtos.request.NewCodeDTO;
 import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewUserDTO;
+import com.uade.api.dtos.request.UpdateUserDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,10 @@ public class UserValidator implements Validator {
         nonEmptyString(dto.address);
         nonEmptyString(dto.lastName);
         nonEmptyString(dto.firstName);
+    }
+
+    public void validateUpdateUser(UpdateUserDTO dto) {
+        nonNull(dto);
     }
 
     public void validateNewCode(NewCodeDTO dto) {

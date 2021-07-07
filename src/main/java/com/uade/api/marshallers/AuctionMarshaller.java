@@ -8,6 +8,7 @@ import com.uade.api.models.ClientStatus;
 import com.uade.api.models.UserModel;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,9 @@ public class AuctionMarshaller {
     }
 
     private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(AuctionModel auction, CatalogModel catalog, UserModel userModel) {
-        String auctionStatus = catalog.isAuctioned() ? "Subastado" : "Subastandose";
+        ZonedDateTime now = ZonedDateTime.now();
+        boolean isFutureAuction = auction.getDate().isAfter(now);
+        String auctionStatus = isFutureAuction ? "A Subastarse" : catalog.isAuctioned() ? "Subastado" : "Subastandose";
         String ownerName = catalog.getOwner().getFirstName() + " " + catalog.getOwner().getLastName();
         boolean userSameAsOwner = userModel != null && userModel.getId().equals(catalog.getOwner().getId());
         boolean userSameCategoryAsAuction = userModel != null && auction.getCategory().priority() >= userModel.getCategory().priority();

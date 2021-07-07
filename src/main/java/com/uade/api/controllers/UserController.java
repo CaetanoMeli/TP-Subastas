@@ -8,6 +8,7 @@ import com.uade.api.dtos.request.NewCodeDTO;
 import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewPaymentMethodDTO;
 import com.uade.api.dtos.request.NewUserDTO;
+import com.uade.api.dtos.request.UpdateUserDTO;
 import com.uade.api.dtos.response.PaymentMethodsDTO;
 import com.uade.api.dtos.response.ProductDTO;
 import com.uade.api.dtos.response.UserDTO;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -78,6 +80,24 @@ public class UserController {
         userService.registerUser(model);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PatchMapping(value = "")
+    public ResponseEntity updateUser(@RequestBody UpdateUserDTO dto) {
+        userValidator.validateUpdateUser(dto);
+
+        UserModel model = UserModel.builder()
+                .firstName(dto.firstName)
+                .lastName(dto.lastName)
+                .password(dto.password)
+                .address(dto.address)
+                .phone(dto.phone)
+                .email(dto.email)
+                .build();
+
+        userService.updateUser(model);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
@@ -156,6 +176,13 @@ public class UserController {
         userService.addArticle(id, productModel);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/{id}/articles/{articleId}")
+    public ResponseEntity approveArticle(@PathVariable int id, @PathVariable int articleId) {
+        userService.approveArticle(id, articleId);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/articles")

@@ -18,9 +18,7 @@ import com.uade.api.repositories.UserRepository;
 import com.uade.api.utils.RandomNumberGenerator;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,6 +46,23 @@ public class UserService {
         } catch(Exception e) {
             throw new InternalServerException();
         }
+    }
+
+    public void updateUser(UserModel userModel) {
+        Optional<User> optionalUser = userRepository.findById(userModel.getId());
+
+        optionalUser.ifPresentOrElse(user -> {
+            Optional.ofNullable(userModel.getFirstName()).ifPresent(user::setFirstName);
+            Optional.ofNullable(userModel.getLastName()).ifPresent(user::setLastName);
+            Optional.ofNullable(userModel.getEmail()).ifPresent(user::setEmail);
+            Optional.ofNullable(userModel.getAddress()).ifPresent(user::setAddress);
+            Optional.ofNullable(userModel.getPhone()).ifPresent(user::setPhone);
+            Optional.ofNullable(userModel.getPassword()).ifPresent(user::setPassword);
+
+            userRepository.save(user);
+        }, () -> {
+            throw new NotFoundException();
+        });
     }
 
     public UserModel getUser(String email) {
@@ -180,6 +195,21 @@ public class UserService {
                         .map(this::mapToProductModel)
                         .collect(Collectors.toList())
                 ).orElseThrow(NotFoundException::new);
+    }
+
+    public void approveArticle(Integer id, Integer productId) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        userOptional.ifPresentOrElse(user ->
+            user.getOwner().getProducts().stream()
+                    .filter(product -> productId.equals(product.getId()))
+                    .findFirst()
+                    .ifPresentOrElse(productService::approveProduct, () -> {
+                        throw new NotFoundException();
+                    })
+        , () -> {
+            throw new NotFoundException();
+        });
     }
 
     public void addArticle(Integer id, ProductModel productModel) {

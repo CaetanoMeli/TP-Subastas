@@ -28,6 +28,12 @@ public class ProductService {
         this.employeeRepository = employeeRepository;
     }
 
+    public void approveProduct(Product product) {
+        product.setAvailable("si");
+
+        productRepository.save(product);
+    }
+
     @Transactional
     public void addProduct(ProductModel model, Owner owner) {
         Employee employee = assignEmployee();

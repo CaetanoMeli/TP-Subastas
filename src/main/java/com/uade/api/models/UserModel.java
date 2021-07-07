@@ -19,6 +19,7 @@ public class UserModel {
     private final String email;
     private final String address;
     private final String phone;
+    private final String password;
     private final User entity;
     private final boolean hasActiveBid;
     private UserStatus status;
