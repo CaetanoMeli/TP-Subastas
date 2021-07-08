@@ -69,7 +69,7 @@ public class BidService {
 
         boolean isGoldOrPlatinum = CategoryType.GOLD.priority() >= catalogModel.getCategoryType().priority();
 
-        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && isHigherThanWinningBid && (isGoldOrPlatinum || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
+        boolean isValidAmount = amount.compareTo(onePercentOfBasePrice) >= 0 && isHigherThanWinningBid && (isGoldOrPlatinum || currentValue == null || twentyPercentOfLastWinningBid != null && amount.compareTo(twentyPercentOfLastWinningBid) <= 0);
 
         if (!isValidAmount) {
             throw new BadRequestException("invalid_amount");
