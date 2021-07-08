@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Builder
 public class ProductDTO {
+    private Integer id;
     private List<String> images;
     private String description;
     private String fullDescription;

@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Builder
 public class ProductModel {
+    private int id;
     private List<String> images;
     private String description;
     private String fullDescription;

@@ -18,6 +18,7 @@ public class ArticleMarshaller {
 
     private ProductDTO mapToDTO(ProductModel model) {
         return ProductDTO.builder()
+                .id(model.getId())
                 .images(model.getImages())
                 .soldDate(model.getSoldDate())
                 .earnings(model.getEarnings())

@@ -339,6 +339,7 @@ public class UserService {
         //If product has no catalog items it pending approval. We'll assume only 1 item catalog is possible per product
         CatalogItem catalogItem = product.getCatalogItems().stream().findFirst().orElse(null);
         var productModelBuilder = ProductModel.builder()
+                .id(product.getId())
                 .images(product.getPictures().stream().map(Picture::getPhoto).collect(Collectors.toList()))
                 .description(product.getCompleteDescription())
                 .fullDescription(product.getCatalogDescription())
