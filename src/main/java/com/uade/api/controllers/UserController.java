@@ -12,6 +12,7 @@ import com.uade.api.dtos.request.UpdateUserDTO;
 import com.uade.api.dtos.response.BidDTO;
 import com.uade.api.dtos.response.PaymentMethodsDTO;
 import com.uade.api.dtos.response.ProductDTO;
+import com.uade.api.dtos.response.StatsDTO;
 import com.uade.api.dtos.response.UserDTO;
 import com.uade.api.entities.Client;
 import com.uade.api.marshallers.ArticleMarshaller;
@@ -20,6 +21,7 @@ import com.uade.api.models.BidModel;
 import com.uade.api.models.PaymentMethodModel;
 import com.uade.api.models.PaymentMethodType;
 import com.uade.api.models.ProductModel;
+import com.uade.api.models.StatsModel;
 import com.uade.api.models.UserModel;
 import com.uade.api.services.BidService;
 import com.uade.api.services.ClientService;
@@ -266,6 +268,25 @@ public class UserController {
                         .result(bidModel.getResult())
                         .build()
                 ).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "/{id}/stats")
+    public StatsDTO getStats(@PathVariable int id) {
+        StatsModel model = userService.getStats(id);
+
+        return StatsDTO.builder()
+                .auctionRatio(StatsDTO.AuctionRatioDTO.builder()
+                        .won(model.getAuctionRatio().getWon())
+                        .lost(model.getAuctionRatio().getLost())
+                        .build()
+                ).categoryParticipation(
+                        model.getCategoryParticipation().stream()
+                                .map(categoryParticipation -> StatsDTO.CategoryParticipationDTO.builder()
+                                        .category(categoryParticipation.getCategory())
+                                        .value(categoryParticipation.getValue())
+                                        .build()
+                                ).collect(Collectors.toList())
+                ).build();
     }
 
     @GetMapping(value = "/logout")

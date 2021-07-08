@@ -13,6 +13,7 @@ import com.uade.api.models.CategoryType;
 import com.uade.api.models.ClientStatus;
 import com.uade.api.models.ProductModel;
 import com.uade.api.models.ProductStatus;
+import com.uade.api.models.StatsModel;
 import com.uade.api.models.UserModel;
 import com.uade.api.models.UserStatus;
 import com.uade.api.repositories.UserRepository;
@@ -26,6 +27,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -220,6 +224,49 @@ public class UserService {
                 ).orElseThrow(NotFoundException::new);
     }
 
+    public StatsModel getStats(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        return userOptional
+                .map(user -> {
+                    List<Bid> userBids = getBids(user);
+
+                    Function<Bid, CategoryType> bidToCategoryType = bid -> CategoryType.fromString(bid.getCatalog().getAuction().getCategory());
+
+                    Predicate<Bid> isWinningBid = bid -> bid.getCatalog().getBids().stream()
+                            .max(Comparator.comparing(Bid::getAmount))
+                            .map(winningBid -> winningBid.getId() == bid.getId())
+                            .orElseThrow(() -> {
+                                return new InternalServerException("error getting winning bid");
+                            });
+
+                    Map<CategoryType, Integer> mapPerCategoryType = userBids.stream()
+                            .collect(Collectors.groupingBy(bidToCategoryType,
+                                    Collectors.collectingAndThen(
+                                            Collectors.mapping(bidToCategoryType, Collectors.toSet()),
+                                            Set::size)));
+
+                    return StatsModel.builder()
+                            .auctionRatio(
+                                    StatsModel.AuctionRatioModel.builder()
+                                    .won(userBids.stream()
+                                            .filter(isWinningBid)
+                                            .count()
+                                    ).lost(userBids.stream()
+                                            .filter(isWinningBid.negate())
+                                            .count()
+                                    ).build()
+                            ).categoryParticipation(mapPerCategoryType.entrySet().stream()
+                                    .map(entry -> StatsModel.CategoryParticipationModel.builder()
+                                            .value(entry.getValue())
+                                            .category(entry.getKey().value())
+                                            .build()
+                                    ).collect(Collectors.toList())
+                            )
+                            .build();
+                }).orElseThrow(NotFoundException::new);
+    }
+
     public List<ProductModel> getArticles(Integer id) {
         Optional<User> userOptional = userRepository.findById(id);
 
@@ -252,6 +299,19 @@ public class UserService {
         userOptional.ifPresentOrElse(user -> productService.addProduct(productModel, user.getOwner()), () -> {
             throw new NotFoundException();
         });
+    }
+
+    private List<Bid> getBids(User user) {
+        List<Bid> bids = user.getClient().getBids();
+
+        var maxBidByCatalog = bids.stream()
+                .collect(Collectors.groupingBy(b -> b.getCatalog().getId(), Collectors.maxBy(Comparator.comparing(Bid::getAmount))));
+
+        return maxBidByCatalog.values()
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     private BidModel mapToBidModel(Bid bid) {
