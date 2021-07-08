@@ -22,7 +22,6 @@ import java.util.List;
 @Table(name = "clientes")
 public class Client {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "identificador")
     private int id;
     @Column(name = "numeroPais")
@@ -38,9 +37,9 @@ public class Client {
     @JoinColumn(name = "identificador")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     private List<PaymentMethod> paymentMethods;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
     private List<Bid> bids;
 }

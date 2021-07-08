@@ -26,12 +26,12 @@ public class Owner {
     @Column(name = "identificador")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Product> products;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Bid> bids;
 }

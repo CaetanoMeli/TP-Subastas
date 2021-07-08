@@ -9,12 +9,14 @@ import com.uade.api.dtos.request.NewPasswordDTO;
 import com.uade.api.dtos.request.NewPaymentMethodDTO;
 import com.uade.api.dtos.request.NewUserDTO;
 import com.uade.api.dtos.request.UpdateUserDTO;
+import com.uade.api.dtos.response.BidDTO;
 import com.uade.api.dtos.response.PaymentMethodsDTO;
 import com.uade.api.dtos.response.ProductDTO;
 import com.uade.api.dtos.response.UserDTO;
 import com.uade.api.entities.Client;
 import com.uade.api.marshallers.ArticleMarshaller;
 import com.uade.api.marshallers.PaymentMethodMarshaller;
+import com.uade.api.models.BidModel;
 import com.uade.api.models.PaymentMethodModel;
 import com.uade.api.models.PaymentMethodType;
 import com.uade.api.models.ProductModel;
@@ -36,7 +38,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("users")
@@ -244,6 +248,24 @@ public class UserController {
         bidService.addBid(model, dto.amount, dto.catalogId);
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/{id}/bids")
+    public List<BidDTO> getBids(@PathVariable int id) {
+        final String DATE_FORMAT = "yyyy-MM-dd HH:mm'hs'";
+        final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+        List<BidModel> bidModels = userService.getBids(id);
+
+        return bidModels.stream()
+                .map(bidModel -> BidDTO.builder()
+                        .id(bidModel.getId())
+                        .catalogId(bidModel.getCatalogId())
+                        .createdDate(bidModel.getCreatedDate().format(DATE_FORMATTER))
+                        .amount(bidModel.getAmount())
+                        .result(bidModel.getResult())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/logout")

@@ -34,9 +34,9 @@ public class Catalog {
     @JoinColumn(name = "subasta", referencedColumnName = "identificador")
     private Auction auction;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog")
     private List<CatalogItem> catalogItems;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catalog")
     private List<Bid> bids;
 }

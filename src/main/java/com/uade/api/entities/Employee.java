@@ -28,6 +28,6 @@ public class Employee {
     @Column(name = "sector")
     private int sector;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
     private List<Product> products;
 }

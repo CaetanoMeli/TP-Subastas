@@ -37,10 +37,10 @@ public class Product {
     @Column(name = "descripcion_completa")
     private String completeDescription;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<CatalogItem> catalogItems;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<Picture> pictures;
 
     @ManyToOne(fetch = FetchType.LAZY)

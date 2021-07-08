@@ -42,7 +42,7 @@ public class User {
     @Column(name = "estado")
     private String status;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Client client;
 
     @OneToOne(fetch = FetchType.LAZY)

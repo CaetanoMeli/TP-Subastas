@@ -8,6 +8,7 @@ import com.uade.api.entities.User;
 import com.uade.api.exceptions.BadRequestException;
 import com.uade.api.exceptions.InternalServerException;
 import com.uade.api.exceptions.NotFoundException;
+import com.uade.api.models.BidModel;
 import com.uade.api.models.CategoryType;
 import com.uade.api.models.ClientStatus;
 import com.uade.api.models.ProductModel;
@@ -17,9 +18,13 @@ import com.uade.api.models.UserStatus;
 import com.uade.api.repositories.UserRepository;
 import com.uade.api.utils.RandomNumberGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,21 +33,25 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final ClientService clientService;
     private final CatalogService catalogService;
     private final ProductService productService;
 
-    public UserService(UserRepository userRepository, CatalogService catalogService, ProductService productService) {
+    public UserService(UserRepository userRepository, ClientService clientService, CatalogService catalogService, ProductService productService) {
         this.userRepository = userRepository;
+        this.clientService = clientService;
         this.catalogService = catalogService;
         this.productService = productService;
     }
 
+    @Transactional
     public void registerUser(UserModel userModel) {
         User user = mapModelToEntity(userModel);
         user.setStatus(UserStatus.INACTIVE.value());
 
         try {
             userRepository.save(user);
+            clientService.createClient(user);
         } catch(Exception e) {
             throw new InternalServerException();
         }
@@ -186,6 +195,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<BidModel> getBids(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        return userOptional
+                .map(user -> {
+                    List<Bid> bids = user.getClient().getBids();
+
+                    var maxBidByCatalog = bids.stream()
+                            .collect(Collectors.groupingBy(b -> b.getCatalog().getId(), Collectors.maxBy(Comparator.comparing(Bid::getAmount))));
+
+                    var maxBids = maxBidByCatalog.values()
+                            .stream()
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .collect(Collectors.toList());
+
+
+                    return maxBids
+                            .stream()
+                            .map(this::mapToBidModel)
+                            .collect(Collectors.toList());
+                        }
+                ).orElseThrow(NotFoundException::new);
+    }
+
     public List<ProductModel> getArticles(Integer id) {
         Optional<User> userOptional = userRepository.findById(id);
 
@@ -218,6 +252,27 @@ public class UserService {
         userOptional.ifPresentOrElse(user -> productService.addProduct(productModel, user.getOwner()), () -> {
             throw new NotFoundException();
         });
+    }
+
+    private BidModel mapToBidModel(Bid bid) {
+        Bid winningBid = bid.getCatalog().getBids().stream()
+                .max(Comparator.comparing(Bid::getAmount))
+                .orElseThrow(InternalServerException::new);
+        var bidModelBuilder = BidModel.builder()
+                .id(bid.getId())
+                .amount(bid.getAmount())
+                .createdDate(ZonedDateTime.ofInstant(bid.getDateCreated().toInstant(), ZoneId.systemDefault()))
+                .catalogId(bid.getCatalog().getId());
+
+        if (catalogService.isAuctioned(bid.getCatalog())) {
+            bidModelBuilder
+                    .result(winningBid.getId() == bid.getId() ? "Ganaste" : "Perdiste");
+        } else {
+            bidModelBuilder
+                    .result(winningBid.getId() == bid.getId() ? "Ganando" : "En curso");
+        }
+
+        return bidModelBuilder.build();
     }
 
     private ProductModel mapToProductModel(Product product) {

@@ -30,9 +30,9 @@ public class Auctioner {
     @Column(name = "region")
     private String region;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "auctioner", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "auctioner")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "auctioner", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "auctioner")
     private List<Auction> auction;
 }

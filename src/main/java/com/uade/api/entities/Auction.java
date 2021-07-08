@@ -53,6 +53,6 @@ public class Auction {
     @JoinColumn(name = "subastador", referencedColumnName = "identificador")
     private Auctioner auctioner;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "auction", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "auction")
     private List<Catalog> catalogList;
 }
