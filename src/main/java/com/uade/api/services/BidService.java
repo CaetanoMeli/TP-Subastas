@@ -18,7 +18,7 @@ import java.util.Date;
 @Service
 public class BidService {
     private static final int CONFIG_ID = 1;
-    private static final int DEFAULT_MAX_TIME = 1;
+    private static final int DEFAULT_MAX_TIME = 20;
     private static final String DEFAULT_UNIT = TimeUnit.MINUTES.value();
 
     private final BidRepository bidRepository;
