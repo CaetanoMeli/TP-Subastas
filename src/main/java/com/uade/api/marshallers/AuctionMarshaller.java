@@ -50,7 +50,7 @@ public class AuctionMarshaller {
     private AuctionCatalogDTO.ArticleDTO modelToArticleDTO(AuctionModel auction, CatalogModel currentCatalog, CatalogModel previousCatalog, UserModel userModel) {
         ZonedDateTime now = ZonedDateTime.now();
         boolean isFutureAuction = auction.getDate().isAfter(now);
-        Function<CatalogModel, String> getStatus = catalog -> isFutureAuction ? CatalogStatus.TO_AUCTION.value() : currentCatalog.isAuctioned() ? CatalogStatus.AUCTIONED.value() : CatalogStatus.AUCTIONING.value();
+        Function<CatalogModel, String> getStatus = catalog -> isFutureAuction ? CatalogStatus.TO_AUCTION.value() : catalog.isAuctioned() ? CatalogStatus.AUCTIONED.value() : CatalogStatus.AUCTIONING.value();
 
         String catalogStatus;
 
